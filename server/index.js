@@ -9,6 +9,9 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors());
+app.use(express.json());
+
 // Token de acceso proporcionado por variable de entorno
 const client = new MercadoPagoConfig({
     accessToken: process.env.MP_ACCESS_TOKEN || 'APP_USR-3473191615659453-030400-81435794a95670ce95ff1535f712a58a-3243325156'

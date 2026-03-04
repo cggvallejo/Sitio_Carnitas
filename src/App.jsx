@@ -7,28 +7,6 @@ import { CartProvider } from './context/CartContext';
 import Chatbot from './components/Chatbot';
 
 function App() {
-  const [hasError, setHasError] = React.useState(false);
-  const [errorMsg, setErrorMsg] = React.useState('');
-
-  React.useEffect(() => {
-    const handleError = (event) => {
-      setHasError(true);
-      setErrorMsg(event.message || 'Error desconocido');
-    };
-    window.addEventListener('error', handleError);
-    return () => window.removeEventListener('error', handleError);
-  }, []);
-
-  if (hasError) {
-    return (
-      <div style={{ padding: '2rem', color: 'red', background: '#fff', minHeight: '100vh' }}>
-        <h1>Algo salió mal:</h1>
-        <p>{errorMsg}</p>
-        <button onClick={() => window.location.reload()}>Reintentar</button>
-      </div>
-    );
-  }
-
   return (
     <CartProvider>
       <div className="app">
