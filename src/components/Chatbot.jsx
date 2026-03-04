@@ -19,10 +19,10 @@ const Chatbot = () => {
     const [currentOrder, setCurrentOrder] = useState({ items: [], location: '', payment: '' });
 
     const menuOptions = [
-        { label: "Tacos (x3) - $95", id: "tacos" },
-        { label: "Torta Carnitas - $85", id: "torta" },
-        { label: "1kg Surtida - $420", id: "kilo_surtida" },
-        { label: "Refresco 600ml - $25", id: "refresco" }
+        { label: "Tacos (x3) - $95", id: 1 },         // Tacos de Carnitas
+        { label: "Torta Carnitas - $85", id: 4 },     // Torta de Carnitas
+        { label: "1kg Surtida - $420", id: 3 },       // 1kg de Surtida
+        { label: "Refresco 600ml - $25", id: 10 }     // Refresco Botella 600ml
     ];
 
     const getOrderTotal = () => currentOrder.items.reduce((sum, item) => sum + item.price, 0);
@@ -78,17 +78,21 @@ const Chatbot = () => {
                 // Buscar el producto seleccionado
                 const option = menuOptions.find(o => o.label === replyText);
                 if (option) {
-                    const prodDb = products.find(p => p.id === option.id || p.name.includes(replyText.split(' -')[0].replace(/[^a-zA-Z]/g, '').trim()));
+                    const prodDb = products.find(p => p.id === option.id);
                     if (prodDb) {
                         addToCart(prodDb);
-                        const newItems = [...currentOrder.items, { name: prodDb.name, price: prodDb.price }];
-                        setCurrentOrder({ ...currentOrder, items: newItems });
-                        const newTotal = newItems.reduce((sum, item) => sum + item.price, 0);
-                        addMessage('bot', `¡Agregado ${prodDb.name}! Subtotal: $${newTotal.toFixed(2)}. ¿Te apetece algo más?`);
+                        setCurrentOrder(prevOrder => {
+                            const newItems = [...prevOrder.items, { name: prodDb.name, price: prodDb.price }];
+                            const newTotal = newItems.reduce((sum, item) => sum + item.price, 0);
+                            addMessage('bot', `¡Agregado ${prodDb.name}! Subtotal: $${newTotal.toFixed(2)}. ¿Te apetece algo más?`);
+                            return { ...prevOrder, items: newItems };
+                        });
                     } else {
                         addMessage('bot', '¡Anotado! 👍 ¿Te agrego algo más o ya terminamos el pedido?');
-                        const newItems = [...currentOrder.items, { name: replyText, price: 0 }];
-                        setCurrentOrder({ ...currentOrder, items: newItems });
+                        setCurrentOrder(prevOrder => ({
+                            ...prevOrder,
+                            items: [...prevOrder.items, { name: replyText, price: 0 }]
+                        }));
                     }
                 }
             }
