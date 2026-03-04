@@ -5,96 +5,113 @@ import { products } from '../data/products';
 const Chatbot = () => {
     const { addToCart } = useCart();
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, role: 'bot', text: "¡Qué onda! Soy el Patrón-Bot 🤠. ¿En qué te ayudo hoy? Tenemos tacos, carnitas por kilo y bebidas bien frías." }
+        { id: 1, role: 'bot', text: "¡Qué onda! Soy el Patrón-Bot 🤠. Selecciona una opción del menú para empezar tu pedido:" }
     ]);
-    const [inputValue, setInputValue] = useState('');
     const scrollRef = useRef(null);
 
-    const quickReplies = [
-        "🌮 Ver Tacos",
-        "🥩 Pedir por Kilo",
-        "🥤 Bebidas",
-        "✅ Confirmar Pedido"
+    // Estado del bot
+    const [orderState, setOrderState] = useState('MENU'); // MENU, LOCATION, PAYMENT, CONFIRM
+    const [currentOrder, setCurrentOrder] = useState({ items: [], location: '', payment: '' });
+
+    const menuOptions = [
+        { label: "🌮 Tacos (x3) - $95", id: "tacos" },
+        { label: "� Torta Carnitas - $85", id: "torta" },
+        { label: "� 1kg Surtida - $420", id: "kilo_surtida" },
+        { label: "🥤 Refresco 600ml - $25", id: "refresco" }
     ];
 
-    useEffect(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    const getQuickReplies = () => {
+        if (orderState === 'MENU') {
+            return [
+                ...menuOptions.map(o => o.label),
+                "✅ Terminar y Pagar"
+            ];
         }
-    }, [messages, isLoading]);
+        if (orderState === 'LOCATION') {
+            return ["🏠 En el Local", "🚗 Para Llevar"];
+        }
+        if (orderState === 'PAYMENT') {
+            return ["💵 Efectivo", "💳 Tarjeta"];
+        }
+        if (orderState === 'CONFIRM') {
+            return ["Enviar a WhatsApp 📲", "Cancelar ❌"];
+        }
+        return [];
+    };
 
-    const handleSend = async (textOverride = null) => {
-        const textToSend = typeof textOverride === 'string' ? textOverride : inputValue;
-        if (!textToSend.trim() || isLoading) return;
+    useEffect(() => {
+        if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }, [messages]);
 
-        const userMsg = { id: Date.now(), role: 'user', text: textToSend.trim() };
-        setMessages(prev => [...prev, userMsg]);
-        setInputValue('');
-        setIsLoading(true);
+    const addMessage = (role, text) => {
+        setMessages(prev => [...prev, { id: Date.now(), role, text }]);
+    };
 
-        try {
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const handleReply = (replyText) => {
+        addMessage('user', replyText);
 
-            const payload = {
-                history: messages.map(m => ({ role: m.role, text: m.text })),
-                message: textToSend.trim()
-            };
-
-            const response = await fetch(`${apiUrl}/api/chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.details || data.error || 'Server error');
-            }
-
-            let botResponseText = data.text;
-
-            // Extract ORDER_SUMMARY if present
-            const orderMatch = botResponseText.match(/\[ORDER_SUMMARY\](.*?)\[\/ORDER_SUMMARY\]/s);
-            if (orderMatch) {
-                const jsonStr = orderMatch[1];
-                botResponseText = botResponseText.replace(orderMatch[0], '').trim();
-
-                try {
-                    const orderData = JSON.parse(jsonStr);
-                    if (orderData.products && orderData.products.length > 0) {
-                        orderData.products.forEach(p => {
-                            const productBase = products.find(prod => prod.name.toLowerCase().includes(p.name.toLowerCase()));
-                            if (productBase) {
-                                for (let i = 0; i < p.quantity; i++) addToCart(productBase);
-                            }
-                        });
+        setTimeout(() => {
+            if (orderState === 'MENU') {
+                if (replyText === '✅ Terminar y Pagar') {
+                    if (currentOrder.items.length === 0) {
+                        addMessage('bot', '¡Tu pedido está vacío! ¿Qué te preparamos? 🌮');
+                    } else {
+                        setOrderState('LOCATION');
+                        addMessage('bot', '¡Excelente elección! 🤤 ¿Para comer aquí o te lo preparamos para llevar?');
                     }
+                    return;
+                }
 
-                    const phone = "523312345678";
-                    const total = orderData.products.reduce((acc, p) => acc + (p.price * p.quantity), 0);
-                    const itemsList = orderData.products.map(p => `- ${p.quantity}x ${p.name}`).join('\n');
-                    const wpMsg = `¡Hola Patrón! Vengo del Asistente Virtual 🤠. Mi pedido confirmado es:\n\n${itemsList}\n\n*Total:* $${total}\n*Dirección:* ${orderData.location}\n*Pago:* ${orderData.paymentMethod}\n\n¡Gracias!`;
-
-                    setTimeout(() => {
-                        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(wpMsg)}`, '_blank');
-                    }, 2000);
-
-                } catch (e) {
-                    console.error("Error parsing order summary:", e);
+                // Buscar el producto seleccionado
+                const option = menuOptions.find(o => o.label === replyText);
+                if (option) {
+                    const prodDb = products.find(p => p.id === option.id || p.name.includes(replyText.split(' -')[0].replace(/[^a-zA-Z]/g, '').trim()));
+                    if (prodDb) {
+                        addToCart(prodDb);
+                        const newItems = [...currentOrder.items, { name: prodDb.name, price: prodDb.price }];
+                        setCurrentOrder({ ...currentOrder, items: newItems });
+                        addMessage('bot', `¡Agregado ${prodDb.name}! Llevas ${newItems.length} producto(s). ¿Algo más?`);
+                    } else {
+                        addMessage('bot', '¡Anotado! 👍 ¿Te agrego algo más o ya terminamos el pedido?');
+                        const newItems = [...currentOrder.items, { name: replyText, price: 0 }];
+                        setCurrentOrder({ ...currentOrder, items: newItems });
+                    }
                 }
             }
+            else if (orderState === 'LOCATION') {
+                setCurrentOrder({ ...currentOrder, location: replyText });
+                setOrderState('PAYMENT');
+                addMessage('bot', '¡Perfecto! ¿Cómo te gustaría pagar?');
+            }
+            else if (orderState === 'PAYMENT') {
+                setCurrentOrder({ ...currentOrder, payment: replyText });
+                setOrderState('CONFIRM');
 
-            setMessages(prev => [...prev, { id: Date.now(), role: 'bot', text: botResponseText || "¡Entendido!" }]);
+                const itemsList = currentOrder.items.map(i => `- ${i.name}`).join('\n');
+                addMessage('bot', `Aquí está tu resumen Patroncito:\n\n${itemsList}\n\nEntrega: ${currentOrder.location}\nPago: ${replyText}\n\n¿Confirmamos el pedido? 😎`);
+            }
+            else if (orderState === 'CONFIRM') {
+                if (replyText === 'Enviar a WhatsApp 📲') {
+                    addMessage('bot', '¡Tu orden va en camino a la cocina! 🚀 Abriendo WhatsApp...');
 
-        } catch (error) {
-            console.error("Chatbot Error:", error);
-            setMessages(prev => [...prev, { id: Date.now(), role: 'bot', text: "Híjole, hubo un problemita técnico con la red 📡. ¿Me repites tu mensaje por favor? 🤠" }]);
-        } finally {
-            setIsLoading(false);
-        }
+                    const itemsList = currentOrder.items.map(i => `- ${i.name}`).join('\n');
+                    const wpMsg = `¡Hola Patrón! Vengo del Bot 🤠. Mi pedido es:\n\n${itemsList}\n\n*Para:* ${currentOrder.location}\n*Pago:* ${currentOrder.payment}\n\n¡Gracias!`;
+
+                    setTimeout(() => {
+                        window.open(`https://wa.me/523312345678?text=${encodeURIComponent(wpMsg)}`, '_blank');
+                        // Reset
+                        setOrderState('MENU');
+                        setCurrentOrder({ items: [], location: '', payment: '' });
+                        addMessage('bot', '¡Listo! ¿Te puedo ayudar con otro pedido?');
+                    }, 1500);
+                } else {
+                    addMessage('bot', '¡No hay problema! Cancelamos esto. ¿Empezamos de nuevo? 🌮');
+                    setOrderState('MENU');
+                    setCurrentOrder({ items: [], location: '', payment: '' });
+                }
+            }
+        }, 600);
     };
 
     return (
@@ -115,8 +132,8 @@ const Chatbot = () => {
                         <div style={styles.botInfo}>
                             <span style={styles.botAvatar}>🤠</span>
                             <div>
-                                <h4 style={styles.botName}>Patrón-Bot (Nuevo)</h4>
-                                <small style={styles.botStatus}>En línea</small>
+                                <h4 style={styles.botName}>Patrón-Bot (Nativo)</h4>
+                                <small style={styles.botStatus}>⚡ 100% Rápido y Estable</small>
                             </div>
                         </div>
                     </div>
@@ -134,45 +151,25 @@ const Chatbot = () => {
                                     ...styles.messageBubble,
                                     backgroundColor: msg.role === 'bot' ? '#f0f0f0' : 'var(--primary)',
                                     color: msg.role === 'bot' ? '#333' : 'white',
-                                    borderRadius: msg.role === 'bot' ? '0 15px 15px 15px' : '15px 15px 0 15px'
+                                    borderRadius: msg.role === 'bot' ? '0 15px 15px 15px' : '15px 15px 0 15px',
+                                    whiteSpace: 'pre-wrap'
                                 }}>
                                     {msg.text}
                                 </div>
                             </div>
                         ))}
-                        {isLoading && (
-                            <div style={{ ...styles.messageRow, justifyContent: 'flex-start' }}>
-                                <div style={{ ...styles.messageBubble, backgroundColor: '#f0f0f0', color: '#666', fontStyle: 'italic', borderRadius: '0 15px 15px 15px' }}>
-                                    Escribiendo...
-                                </div>
-                            </div>
-                        )}
                     </div>
 
                     <div style={styles.quickRepliesContainer}>
-                        {quickReplies.map((reply, idx) => (
+                        {getQuickReplies().map((reply, idx) => (
                             <button
                                 key={idx}
                                 style={styles.quickReplyBtn}
-                                onClick={() => handleSend(reply)}
-                                disabled={isLoading}
+                                onClick={() => handleReply(reply)}
                             >
                                 {reply}
                             </button>
                         ))}
-                    </div>
-
-                    <div style={styles.inputArea}>
-                        <input
-                            type="text"
-                            placeholder="Escribe tu mensaje aquí..."
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                            style={styles.input}
-                            disabled={isLoading}
-                        />
-                        <button onClick={() => handleSend()} style={styles.sendBtn} disabled={isLoading}>➤</button>
                     </div>
                 </div>
             )}
@@ -192,11 +189,8 @@ const styles = {
     messages: { flex: 1, padding: '1rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', backgroundColor: '#fdfdfd' },
     messageRow: { display: 'flex', width: '100%' },
     messageBubble: { maxWidth: '85%', padding: '0.8rem 1rem', fontSize: '0.95rem', lineHeight: '1.4', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' },
-    inputArea: { padding: '0.8rem', borderTop: '1px solid #eee', display: 'flex', gap: '0.5rem', backgroundColor: '#fff' },
-    input: { flex: 1, border: '1px solid #ddd', borderRadius: '20px', padding: '0.6rem 1rem', fontSize: '0.95rem', outline: 'none' },
-    sendBtn: { backgroundColor: 'var(--primary)', color: 'white', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', border: 'none', cursor: 'pointer' },
-    quickRepliesContainer: { display: 'flex', flexWrap: 'wrap', gap: '0.4rem', padding: '0.6rem', backgroundColor: '#fafafa', borderTop: '1px solid #eee' },
-    quickReplyBtn: { backgroundColor: '#fdeee8', color: 'var(--primary)', border: '1px solid rgba(230, 81, 0, 0.3)', borderRadius: '15px', padding: '0.4rem 0.8rem', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.2s', whiteSpace: 'nowrap', fontWeight: '500' }
+    quickRepliesContainer: { display: 'flex', flexWrap: 'wrap', gap: '0.5rem', padding: '1rem', backgroundColor: '#fafafa', borderTop: '1px solid #eee', justifyContent: 'center' },
+    quickReplyBtn: { backgroundColor: '#fdeee8', color: 'var(--primary)', border: '1px solid rgba(230, 81, 0, 0.3)', borderRadius: '15px', padding: '0.6rem 1rem', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold', width: '100%' }
 };
 
 export default Chatbot;
