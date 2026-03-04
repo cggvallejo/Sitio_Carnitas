@@ -1,0 +1,32 @@
+services:
+  # Servicio para el Backend (Express)
+  - type: web
+    name: carnitas-api
+    runtime: node
+    buildCommand: npm install
+    startCommand: node index.js
+    rootDir: server
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: MP_ACCESS_TOKEN
+        sync: false # Deberás configurarlo manualmente en el panel de Render
+      - key: NODE_VERSION
+        value: 22.22.0
+
+  # Servicio para el Frontend (Static Site)
+  - type: web
+    name: carnitas-frontend
+    runtime: static
+    buildCommand: npm install && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: carnitas-api
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
