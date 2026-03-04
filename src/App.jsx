@@ -6,6 +6,7 @@ import CartSidebar from './components/CartSidebar';
 import { CartProvider } from './context/CartContext';
 import Chatbot from './components/Chatbot';
 import PorkbotPeeker from './components/PorkbotPeeker';
+import PorkbotCursorThief from './components/PorkbotCursorThief';
 import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -48,6 +49,7 @@ function App() {
 
         <CartSidebar />
         <PorkbotPeeker />
+        <PorkbotCursorThief />
         <Chatbot />
       </div>
     </CartProvider>
