@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useId } from 'react';
 
 const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
-    const containerRef = useRef(null);
+    const rawId = useId();
+    const containerId = `paymentBrick_container_${rawId.replace(/:/g, '')}`;
     const controllerRef = useRef(null);
     const mpRef = useRef(null);
 
@@ -17,11 +18,11 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
         const bricksBuilder = mp.bricks();
 
         const renderPaymentBrick = async (bricksBuilder) => {
-            const container = document.getElementById('paymentBrick_container');
+            const container = document.getElementById(containerId);
             if (container) {
                 // Limpieza física total
-                container.innerHTML = '<div id="mp_loading_msg"></div>';
-                const loadingMsg = document.getElementById('mp_loading_msg');
+                container.innerHTML = `<div id="${containerId}_loading_msg"></div>`;
+                const loadingMsg = document.getElementById(`${containerId}_loading_msg`);
                 if (loadingMsg) {
                     loadingMsg.innerHTML = '<p style="text-align:center;padding-top:2rem;color:#666;">Cargando módulo de pago seguro...</p>';
                 }
@@ -40,7 +41,7 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
                     },
                     callbacks: {
                         onReady: () => {
-                            const loadingElement = document.getElementById('mp_loading_msg');
+                            const loadingElement = document.getElementById(`${containerId}_loading_msg`);
                             if (loadingElement) loadingElement.style.display = 'none';
                         },
                         onSubmit: ({ selectedPaymentMethod, formData }) => {
@@ -77,7 +78,7 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
 
                 const controller = await bricksBuilder.create(
                     'payment',
-                    'paymentBrick_container',
+                    containerId,
                     settings
                 );
 
@@ -107,8 +108,8 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
 
     return (
         <div style={styles.container}>
-            <div id="paymentBrick_container">
-                <div id="mp_loading_msg" style={styles.loadingMsg}>
+            <div id={containerId}>
+                <div id={`${containerId}_loading_msg`} style={styles.loadingMsg}>
                     <p>Cargando módulo de pago seguro...</p>
                     <small style={styles.note}>Nota: Requiere una Public Key válida de Mercado Pago para renderizar el formulario completo.</small>
                 </div>

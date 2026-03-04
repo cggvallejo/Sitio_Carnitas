@@ -193,13 +193,9 @@ const Chatbot = () => {
                                 </motion.div>
                             ))}
                             {orderState === 'MP_CHECKOUT' && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    style={{ width: '100%', marginTop: '1rem' }}
-                                >
+                                <div style={{ width: '100%', marginTop: '1rem', animation: 'fadeIn 0.5s ease-in-out forwards' }}>
                                     <MercadoPagoBtn amount={getOrderTotal()} />
-                                </motion.div>
+                                </div>
                             )}
                         </div>
 
