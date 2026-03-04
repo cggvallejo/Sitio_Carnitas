@@ -7,7 +7,7 @@ import MercadoPagoBtn from './MercadoPagoBtn';
 import porkbotImg from '../assets/images/porkbot.png';
 
 const Chatbot = () => {
-    const { addToCart } = useCart();
+    const { addToCart, setIsCartOpen } = useCart();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
         { id: 1, role: 'bot', text: "¡Oink, oink! 🐷 Soy Porkbot. ¿Qué se te antoja de nuestro menú hoy?" }
@@ -80,7 +80,7 @@ const Chatbot = () => {
                 if (option) {
                     const prodDb = products.find(p => p.id === option.id);
                     if (prodDb) {
-                        addToCart(prodDb);
+                        addToCart(prodDb, false);
                         setCurrentOrder(prevOrder => {
                             const newItems = [...prevOrder.items, { name: prodDb.name, price: prodDb.price }];
                             const newTotal = newItems.reduce((sum, item) => sum + item.price, 0);
@@ -159,7 +159,10 @@ const Chatbot = () => {
             <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => {
+                    setIsOpen(!isOpen);
+                    if (!isOpen) setIsCartOpen(false);
+                }}
                 style={{
                     ...styles.launcher,
                     animation: !isOpen ? 'pulse-soft 2s infinite' : 'none'
