@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { products } from '../data/products';
-import { MessageCircle, X, Bot, CreditCard, Banknote, SmartphoneNfc } from 'lucide-react';
+import { MessageCircle, X, CreditCard, Banknote, SmartphoneNfc } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MercadoPagoBtn from './MercadoPagoBtn';
+import porkbotImg from '../assets/images/porkbot.png';
 
 const Chatbot = () => {
     const { addToCart } = useCart();
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, role: 'bot', text: "¡Qué onda! Soy el Patrón-Bot. Selecciona una opción del menú para empezar tu pedido:" }
+        { id: 1, role: 'bot', text: "¡Oink, oink! 🐷 Soy Porkbot. ¿Qué se te antoja de nuestro menú hoy?" }
     ]);
     const scrollRef = useRef(null);
 
@@ -97,11 +98,11 @@ const Chatbot = () => {
 
                 if (replyText === 'Tarjeta / Mercado Pago') {
                     setOrderState('MP_CHECKOUT');
-                    addMessage('bot', `Total a pagar: $${getOrderTotal().toFixed(2)}. Cargando pasarela segura...`);
+                    addMessage('bot', `Total a pagar: $${getOrderTotal().toFixed(2)}. Abriendo la bóveda de cerdito segura... 🐷💳`);
                 } else {
                     setOrderState('CONFIRM');
                     const itemsList = currentOrder.items.map(i => `- ${i.name}`).join('\n');
-                    addMessage('bot', `Aquí está tu resumen:\n\n${itemsList}\nTotal: $${getOrderTotal().toFixed(2)}\nEntrega: ${currentOrder.location}\nPago: ${replyText}\n\n¿Confirmamos el pedido?`);
+                    addMessage('bot', `Aquí está tu resumen oink-creíble:\n\n${itemsList}\nTotal: $${getOrderTotal().toFixed(2)}\nEntrega: ${currentOrder.location}\nPago: ${replyText}\n\n¿Confirmamos el pedido?`);
                 }
             }
             else if (orderState === 'MP_CHECKOUT') {
@@ -113,10 +114,10 @@ const Chatbot = () => {
             }
             else if (orderState === 'CONFIRM') {
                 if (replyText === 'Enviar a WhatsApp') {
-                    addMessage('bot', '¡Tu orden va en camino! Abriendo WhatsApp...');
+                    addMessage('bot', '¡Tu orden va volando! 🐽 Abriendo WhatsApp...');
 
                     const itemsList = currentOrder.items.map(i => `- ${i.name}`).join('\n');
-                    const wpMsg = `¡Hola Patrón!\nMi pedido es:\n\n${itemsList}\nTotal: $${getOrderTotal().toFixed(2)}\n*Para:* ${currentOrder.location}\n*Pago:* ${currentOrder.payment}\n\n¡Gracias!`;
+                    const wpMsg = `¡Hola! Vengo de parte de Porkbot 🐷\nMi pedido es:\n\n${itemsList}\nTotal: $${getOrderTotal().toFixed(2)}\n*Para:* ${currentOrder.location}\n*Pago:* ${currentOrder.payment}\n\n¡Gracias!`;
 
                     setTimeout(() => {
                         window.open(`https://wa.me/523312345678?text=${encodeURIComponent(wpMsg)}`, '_blank');
@@ -159,12 +160,16 @@ const Chatbot = () => {
                     >
                         <div style={styles.header}>
                             <div style={styles.botInfo}>
-                                <span style={styles.botAvatar}>
-                                    <Bot size={24} color="white" />
-                                </span>
+                                <motion.img
+                                    src={porkbotImg}
+                                    alt="Porkbot Avatar"
+                                    style={styles.botAvatarImg}
+                                    animate={{ y: [-2, 2, -2] }}
+                                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                                />
                                 <div>
-                                    <h4 style={styles.botName}>Patrón-Bot</h4>
-                                    <small style={styles.botStatus}>En línea</small>
+                                    <h4 style={styles.botName}>Porkbot 🐽</h4>
+                                    <small style={styles.botStatus}>En línea y hambriento</small>
                                 </div>
                             </div>
                         </div>
@@ -225,8 +230,8 @@ const styles = {
     window: { position: 'absolute', bottom: '80px', right: '0', width: '340px', height: '500px', backgroundColor: 'white', borderRadius: '20px', boxShadow: '0 10px 40px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column', overflow: 'hidden' },
     header: { padding: '1rem', backgroundColor: 'var(--primary)', color: 'white' },
     botInfo: { display: 'flex', alignItems: 'center', gap: '0.8rem' },
-    botAvatar: { fontSize: '1.8rem', backgroundColor: 'rgba(255,255,255,0.2)', width: '45px', height: '45px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' },
-    botName: { margin: 0, fontSize: '1.1rem', fontWeight: 'bold' },
+    botAvatarImg: { width: '45px', height: '45px', borderRadius: '50%', border: '2px solid white', objectFit: 'cover', backgroundColor: '#ffd1dc' },
+    botName: { margin: 0, fontSize: '1.2rem', fontWeight: 'bold' },
     botStatus: { opacity: 0.9, fontSize: '0.8rem' },
     messages: { flex: 1, padding: '1rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem', backgroundColor: '#fdfdfd' },
     messageRow: { display: 'flex', width: '100%' },
