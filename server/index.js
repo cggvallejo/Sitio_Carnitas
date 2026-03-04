@@ -15,6 +15,10 @@ const client = new MercadoPagoConfig({
 
 const payment = new Payment(client);
 
+app.get('/', (req, res) => {
+    res.send('🍖 API de Carnitas El Patrón corriendo con éxito. Lista para procesar pagos.');
+});
+
 app.post('/process_payment', async (req, res) => {
     try {
         console.log("Recibiendo solicitud de pago...");
