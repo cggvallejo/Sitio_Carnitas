@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import MercadoPagoBtn from './MercadoPagoBtn';
-import { CreditCard, Banknote, TabletSmartphone, Trash2, ShoppingCart } from 'lucide-react';
+import { CreditCard, Banknote, TabletSmartphone, Trash2, ShoppingCart, MapPin } from 'lucide-react';
 
 const CartSidebar = () => {
     const {
@@ -28,6 +28,25 @@ const CartSidebar = () => {
         const itemsList = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
         const text = encodeURIComponent(`¡Hola Patrón!\nMe gustaría hacer un pedido:\n\n${itemsList}\n\nTotal: $${cartTotal.toFixed(2)}\nMetodo de Pago: ${methodText}\nUbicación: ${locText}\n\nMuchas gracias.`);
         window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+    };
+
+    const handleLocationRequest = () => {
+        if (!navigator.geolocation) {
+            alert("Tu dispositivo no soporta geolocalización. Por favor, escribe tu dirección manualmente.");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                const mapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
+                setDeliveryAddress(mapsLink);
+            },
+            (error) => {
+                alert("No pudimos acceder a tu ubicación o denegaste el permiso. Escribe tu dirección manualmente.");
+            },
+            { enableHighAccuracy: true }
+        );
     };
 
     if (!isCartOpen) return null;
@@ -58,7 +77,16 @@ const CartSidebar = () => {
 
                     {deliveryMode === 'delivery' && (
                         <div style={{ marginBottom: '1.5rem', animation: 'fadeIn 0.3s' }}>
-                            <p style={{ marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Dirección de entrega:</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
+                                <p style={{ fontSize: '0.9rem', fontWeight: 'bold', margin: 0 }}>Dirección de entrega:</p>
+                                <button
+                                    onClick={handleLocationRequest}
+                                    style={styles.locationBtn}
+                                    title="Usar mi ubicación actual"
+                                >
+                                    <MapPin size={16} /> GPS Actual
+                                </button>
+                            </div>
                             <input
                                 type="text"
                                 placeholder="Ej: Calle Juárez 123, Col. Centro"
@@ -389,6 +417,9 @@ const styles = {
     },
     deliveryInput: {
         width: '100%', padding: '0.8rem', borderRadius: '10px', border: '1px solid #ddd', fontFamily: 'Outfit, sans-serif', fontSize: '1rem', outline: 'none'
+    },
+    locationBtn: {
+        display: 'flex', alignItems: 'center', gap: '0.3rem', backgroundColor: '#e8f4fd', color: '#0984e3', border: '1px solid #74b9ff', borderRadius: '10px', padding: '0.4rem 0.6rem', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'Outfit, sans-serif', transition: 'all 0.2s'
     }
 };
 

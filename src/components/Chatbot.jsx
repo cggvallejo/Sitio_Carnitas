@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useCart } from '../context/CartContext';
 import { products } from '../data/products';
-import { MessageCircle, X, CreditCard, Banknote, SmartphoneNfc } from 'lucide-react';
+import { MessageCircle, X, CreditCard, Banknote, SmartphoneNfc, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MercadoPagoBtn from './MercadoPagoBtn';
 import porkbotImg from '../assets/images/porkbot.png';
@@ -172,6 +172,34 @@ const Chatbot = () => {
         }, 600);
     };
 
+    const handleLocationRequest = () => {
+        if (!navigator.geolocation) {
+            addMessage('bot', 'Tu dispositivo no soporta geolocalización. Por favor, escribe tu dirección:');
+            return;
+        }
+
+        addMessage('bot', '📍 Solicitando tu ubicación actual...');
+
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                const mapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
+
+                addMessage('user', '📍 Ubicación GPS enviada');
+                setTimeout(() => {
+                    setCurrentOrder(prev => ({ ...prev, location: `Ubicación GPS: ${mapsLink}` }));
+                    setOrderState('PAYMENT');
+                    addMessage('bot', '¡Ubicación exacta recibida! 🐷 ¿Cómo te gustaría pagar?');
+                    setAddressInput('');
+                }, 600);
+            },
+            (error) => {
+                addMessage('bot', '¡Ups! No pudimos obtener tu ubicación o denegaste el permiso. Por favor, escríbela manualmente:');
+            },
+            { enableHighAccuracy: true }
+        );
+    };
+
     return (
         <div style={styles.chatWrapper}>
             <motion.button
@@ -301,9 +329,10 @@ const styles = {
     messageBubble: { maxWidth: '85%', padding: '0.8rem 1rem', fontSize: '0.95rem', lineHeight: '1.4', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' },
     quickRepliesContainer: { display: 'flex', flexWrap: 'wrap', gap: '0.5rem', padding: '1rem', backgroundColor: 'rgba(250, 250, 250, 0.4)', borderTop: '1px solid rgba(255, 255, 255, 0.5)', justifyContent: 'center' },
     quickReplyBtn: { backgroundColor: 'rgba(255, 255, 255, 0.8)', color: 'var(--primary)', border: '1px solid rgba(230, 81, 0, 0.3)', borderRadius: '15px', padding: '0.6rem 1rem', fontSize: '0.9rem', cursor: 'pointer', transition: 'all 0.2s', fontWeight: 'bold', width: '100%' },
-    addressInputContainer: { display: 'flex', gap: '0.5rem', padding: '1rem', backgroundColor: 'rgba(250, 250, 250, 0.4)', borderTop: '1px solid rgba(255, 255, 255, 0.5)' },
+    addressInputContainer: { display: 'flex', flexDirection: 'column', gap: '0.8rem', padding: '1rem', backgroundColor: 'rgba(250, 250, 250, 0.4)', borderTop: '1px solid rgba(255, 255, 255, 0.5)' },
     addressInput: { flex: 1, padding: '0.8rem', borderRadius: '15px', border: '1px solid rgba(230,81,0,0.3)', outline: 'none', backgroundColor: 'rgba(255,255,255,0.8)', fontFamily: 'Outfit, sans-serif' },
-    addressSubmitBtn: { backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '15px', padding: '0 1.2rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'Outfit, sans-serif' }
+    addressSubmitBtn: { backgroundColor: 'var(--primary)', color: 'white', border: 'none', borderRadius: '15px', padding: '0 1.2rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'Outfit, sans-serif' },
+    locationBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', backgroundColor: '#e8f4fd', color: '#0984e3', border: '1px solid #74b9ff', borderRadius: '15px', padding: '0.6rem', fontWeight: 'bold', cursor: 'pointer', fontFamily: 'Outfit, sans-serif', width: '100%', transition: 'all 0.2s' }
 };
 
 export default Chatbot;
