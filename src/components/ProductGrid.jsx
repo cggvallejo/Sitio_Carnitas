@@ -11,7 +11,7 @@ const ProductGrid = () => {
                 <h2 style={styles.title}>Nuestro Menú</h2>
                 <div style={styles.grid}>
                     {products.map((item) => (
-                        <div key={item.id} style={styles.card} className="hover-lift animate-fade">
+                        <div key={item.id} style={styles.card} className="hover-lift animate-fade glass">
                             <div style={styles.imageContainer}>
                                 <img src={item.image} alt={item.name} style={styles.image} />
                                 <span style={styles.categoryBadge}>{item.category}</span>
@@ -41,7 +41,7 @@ const ProductGrid = () => {
 const styles = {
     section: {
         padding: '6rem 0',
-        backgroundColor: 'var(--white)',
+        backgroundColor: 'transparent',
     },
     title: {
         fontSize: '2.5rem',
@@ -55,12 +55,12 @@ const styles = {
         gap: '2.5rem',
     },
     card: {
-        backgroundColor: 'var(--card-bg)',
+        backgroundColor: 'rgba(255, 255, 255, 0.4)', /* Fallback if .glass doesn't override */
         borderRadius: '20px',
         overflow: 'hidden',
         boxShadow: 'var(--shadow)',
         transition: 'var(--transition)',
-        border: '1px solid rgba(0,0,0,0.03)',
+        border: '1px solid rgba(255,255,255,0.3)',
     },
     imageContainer: {
         position: 'relative',
