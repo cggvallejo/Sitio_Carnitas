@@ -79,23 +79,25 @@ const Hero = () => {
                     </motion.p>
 
                     <motion.div variants={itemVariants} style={styles.ctaGroup}>
-                        <motion.button
+                        <motion.a
+                            href="#menu"
                             whileHover={{
                                 scale: 1.05,
                                 boxShadow: '0 20px 40px rgba(179, 84, 30, 0.3)',
                                 backgroundColor: 'var(--primary-dark)'
                             }}
                             whileTap={{ scale: 0.95 }}
-                            style={styles.primaryBtn}
+                            style={{ ...styles.primaryBtn, textDecoration: 'none', display: 'inline-block' }}
                         >
                             EXPLORAR MENÚ
-                        </motion.button>
-                        <motion.button
+                        </motion.a>
+                        <motion.a
+                            href="#quienes-somos"
                             whileHover={{ x: 15, color: 'var(--accent-light)' }}
-                            style={styles.secondaryBtn}
+                            style={{ ...styles.secondaryBtn, textDecoration: 'none' }}
                         >
                             NUESTRA HISTORIA <span style={{ transition: '0.3s' }}>→</span>
-                        </motion.button>
+                        </motion.a>
                     </motion.div>
                 </div>
 

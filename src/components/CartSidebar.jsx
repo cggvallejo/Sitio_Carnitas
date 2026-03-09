@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import MercadoPagoBtn from './MercadoPagoBtn';
-import { CreditCard, Banknote, TabletSmartphone, Trash2, ShoppingCart, MapPin, X } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { locationsData, getClosestBranch } from '../data/locations';
 
 const CartSidebar = () => {
     const {
@@ -11,7 +12,9 @@ const CartSidebar = () => {
         setIsCartOpen,
         updateQuantity,
         removeFromCart,
-        cartTotal
+        cartTotal,
+        selectedBranch,
+        setSelectedBranch
     } = useCart();
 
     const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'delivery', 'selection', 'mercadopago'
@@ -23,11 +26,16 @@ const CartSidebar = () => {
         const method = methodOverride || paymentMethod || 'WhatsApp';
         const methodText = method === 'cash' ? 'Pago en Efectivo' : method === 'terminal' ? 'Pago con Terminal' : 'Pedido de WhatsApp';
 
-        const locText = deliveryMode === 'delivery' ? `Envío a: ${deliveryAddress}` : 'Para recoger en sucursal';
+        let locText = "";
+        if (deliveryMode === 'delivery') {
+            locText = `Envio a Domicilio: ${deliveryAddress}\nSucursal Asignada: ${selectedBranch?.name || 'No asignada'}`;
+        } else {
+            locText = `Para recoger en sucursal: ${selectedBranch?.name || 'No seleccionada'}`;
+        }
 
         const phone = "523312345678"; // Reemplazo a número simulado
         const itemsList = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
-        const text = encodeURIComponent(`¡Hola Patrón!\nMe gustaría hacer un pedido:\n\n${itemsList}\n\nTotal: $${cartTotal.toFixed(2)}\nMetodo de Pago: ${methodText}\nUbicación: ${locText}\n\nMuchas gracias.`);
+        const text = encodeURIComponent(`¡Hola Patrona!\nMe gustaría hacer un pedido:\n\n${itemsList}\n\nTotal: $${cartTotal.toFixed(2)}\nMetodo de Pago: ${methodText}\nUbicación:\n${locText}\n\nMuchas gracias.`);
         window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
     };
 
@@ -40,6 +48,10 @@ const CartSidebar = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
+                const closest = getClosestBranch(latitude, longitude);
+                if (closest) {
+                    setSelectedBranch(closest);
+                }
                 const mapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
                 setDeliveryAddress(mapsLink);
             },
@@ -84,7 +96,11 @@ const CartSidebar = () => {
                         <h4 style={styles.sectionTitle}>Método de Entrega</h4>
                         <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
                             <button
-                                onClick={() => setDeliveryMode('local')}
+                                onClick={() => {
+                                    setDeliveryMode('local');
+                                    // Pre-select first branch if none selected
+                                    if (!selectedBranch) setSelectedBranch(locationsData[0]);
+                                }}
                                 style={{
                                     ...styles.deliveryToggleBtn,
                                     borderColor: deliveryMode === 'local' ? 'var(--primary)' : 'rgba(255, 255, 255, 0.1)',
@@ -105,6 +121,24 @@ const CartSidebar = () => {
                             </button>
                         </div>
 
+                        {deliveryMode === 'local' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <label style={{ color: 'var(--text-muted)', fontSize: '0.8rem', letterSpacing: '0.1em' }}>SELECCIONA SUCURSAL:</label>
+                                <select
+                                    style={styles.deliveryInput}
+                                    value={selectedBranch?.id || ''}
+                                    onChange={(e) => {
+                                        const branch = locationsData.find(b => b.id === parseInt(e.target.value));
+                                        setSelectedBranch(branch);
+                                    }}
+                                >
+                                    {locationsData.map(loc => (
+                                        <option key={loc.id} value={loc.id}>{loc.name}</option>
+                                    ))}
+                                </select>
+                            </motion.div>
+                        )}
+
                         {deliveryMode === 'delivery' && (
                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                 <input
@@ -117,12 +151,22 @@ const CartSidebar = () => {
                                 <button onClick={handleLocationRequest} style={{ ...styles.locationBtn, marginTop: '1rem' }}>
                                     <MapPin size={16} /> USAR MI UBICACIÓN
                                 </button>
+                                {selectedBranch && deliveryAddress && (
+                                    <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--accent)', textAlign: 'center' }}>
+                                        Enviaremos tu pedido desde: <br /><strong>{selectedBranch.name}</strong>
+                                    </p>
+                                )}
                             </motion.div>
                         )}
 
                         <button
                             style={{ ...styles.primaryBtn, marginTop: '2rem' }}
-                            onClick={() => setCheckoutStep('selection')}
+                            onClick={() => {
+                                if (deliveryMode === 'local' && !selectedBranch) {
+                                    setSelectedBranch(locationsData[0]);
+                                }
+                                setCheckoutStep('selection');
+                            }}
                         >
                             CONTINUAR
                         </button>

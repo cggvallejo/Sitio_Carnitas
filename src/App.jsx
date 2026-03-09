@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import About from './components/About';
 import ProductGrid from './components/ProductGrid';
 import CartSidebar from './components/CartSidebar';
 import { CartProvider } from './context/CartContext';
@@ -8,6 +9,7 @@ import Chatbot from './components/Chatbot';
 import PorkbotPeeker from './components/PorkbotPeeker';
 import PorkbotCursorThief from './components/PorkbotCursorThief';
 import Reviews from './components/Reviews';
+import Locations from './components/Locations';
 import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -25,8 +27,10 @@ function App() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <Hero />
+          <About />
           <ProductGrid />
           <Reviews />
+          <Locations />
         </motion.main>
 
         <motion.footer
@@ -37,7 +41,7 @@ function App() {
           style={styles.footer}
         >
           <div className="container" style={styles.footerContent}>
-            <span style={styles.footerBrand}>Carnitas El Patrón</span>
+            <span style={styles.footerBrand}>Carnitas La Patrona</span>
             <p style={{ fontSize: '0.8rem', letterSpacing: '0.1em', marginTop: '2rem' }}>
               &copy; 2026 GUADALAJARA, JALISCO. TODOS LOS DERECHOS RESERVADOS.
             </p>

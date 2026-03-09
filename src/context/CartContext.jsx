@@ -7,6 +7,7 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedBranch, setSelectedBranch] = useState(null);
 
   const addToCart = (product, openCart = true) => {
     setCart((prevCart) => {
@@ -55,7 +56,9 @@ export const CartProvider = ({ children }) => {
         cartCount,
         isCartOpen,
         setIsCartOpen,
-        clearCart
+        clearCart,
+        selectedBranch,
+        setSelectedBranch
       }}
     >
       {children}

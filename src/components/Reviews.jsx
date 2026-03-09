@@ -38,7 +38,7 @@ const Reviews = () => {
     };
 
     const handleShare = (platform) => {
-        const message = `¡Acabo de probar las mejores carnitas en El Patrón! ⭐ ${rating}/5. ${comment}`;
+        const message = `¡Acabo de probar las mejores carnitas en La Patrona! ⭐ ${rating}/5. ${comment}`;
         let url = '';
 
         switch (platform) {
@@ -74,7 +74,7 @@ const Reviews = () => {
                         transition={{ delay: 0.1 }}
                         style={styles.title}
                     >
-                        ¿Qué te pareció <br /> <span style={{ color: 'var(--primary)' }}>El Patrón</span>?
+                        ¿Qué te pareció <br /> <span style={{ color: 'var(--primary)' }}>La Patrona</span>?
                     </motion.h2>
                 </div>
 
@@ -112,7 +112,7 @@ const Reviews = () => {
                                 </div>
 
                                 <textarea
-                                    placeholder="Comparte tu experiencia con El Patrón..."
+                                    placeholder="Comparte tu experiencia con La Patrona..."
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
                                     style={styles.textarea}

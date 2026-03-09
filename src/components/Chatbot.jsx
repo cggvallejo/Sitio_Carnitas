@@ -5,6 +5,7 @@ import { MessageCircle, X, CreditCard, Banknote, SmartphoneNfc, MapPin } from 'l
 import { motion, AnimatePresence } from 'framer-motion';
 import MercadoPagoBtn from './MercadoPagoBtn';
 import porkbotImg from '../assets/images/porkbot.png';
+import { locationsData, getClosestBranch } from '../data/locations';
 
 const Chatbot = () => {
     const { addToCart, setIsCartOpen } = useCart();
@@ -37,6 +38,9 @@ const Chatbot = () => {
         }
         if (orderState === 'LOCATION') {
             return ["Local", "Para Llevar"];
+        }
+        if (orderState === 'SELECT_BRANCH') {
+            return locationsData.map(loc => loc.name);
         }
         if (orderState === 'PAYMENT') {
             return ["Efectivo", "Tarjeta / Mercado Pago"];
@@ -102,10 +106,14 @@ const Chatbot = () => {
                     setOrderState('ADDRESS_INPUT');
                     addMessage('bot', '¡Oink! Vamos hasta tu casa 🚗🐷. Por favor, escribe tu calle, número y colonia:');
                 } else {
-                    setCurrentOrder({ ...currentOrder, location: replyText });
-                    setOrderState('PAYMENT');
-                    addMessage('bot', '¡Perfecto! ¿Cómo te gustaría pagar?');
+                    setOrderState('SELECT_BRANCH');
+                    addMessage('bot', '¡Excelente! ¿En cuál de nuestras sucursales nos visitas hoy?');
                 }
+            }
+            else if (orderState === 'SELECT_BRANCH') {
+                setCurrentOrder({ ...currentOrder, location: `Recoger en: ${replyText}` });
+                setOrderState('PAYMENT');
+                addMessage('bot', `¡Perfecto, te esperamos en ${replyText}! ¿Cómo te gustaría pagar?`);
             }
             else if (orderState === 'PAYMENT') {
                 if (replyText === 'Tarjeta / Mercado Pago') {
@@ -183,13 +191,15 @@ const Chatbot = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
+                const closest = getClosestBranch(latitude, longitude);
+                const branchName = closest ? closest.name : 'Nuestra Sucursal Principal';
                 const mapsLink = `https://maps.google.com/?q=${latitude},${longitude}`;
 
                 addMessage('user', '📍 Ubicación GPS enviada');
                 setTimeout(() => {
-                    setCurrentOrder(prev => ({ ...prev, location: `Ubicación GPS: ${mapsLink}` }));
+                    setCurrentOrder(prev => ({ ...prev, location: `Domicilio: GPS (${mapsLink})\nSucursal Asignada: ${branchName}` }));
                     setOrderState('PAYMENT');
-                    addMessage('bot', '¡Ubicación exacta recibida! 🐷 ¿Cómo te gustaría pagar?');
+                    addMessage('bot', `¡Ubicación exacta recibida! 🐷\nTe enviaremos tu pedido desde ${branchName}.\n¿Cómo te gustaría pagar?`);
                     setAddressInput('');
                 }, 600);
             },
@@ -371,13 +381,13 @@ const styles = {
     },
     botInfo: { display: 'flex', alignItems: 'center', gap: '1.2rem' },
     botAvatarImg: {
-        width: '45px',
-        height: '45px',
+        width: '55px',
+        height: '55px',
         borderRadius: '50%',
-        border: '1px solid var(--accent-muted)',
-        objectFit: 'cover',
-        backgroundColor: 'var(--bg-color)',
-        padding: '2px',
+        border: '1px solid var(--accent)',
+        objectFit: 'contain',
+        backgroundColor: 'rgba(5, 5, 5, 0.8)',
+        padding: '5px',
     },
     botName: {
         margin: 0,

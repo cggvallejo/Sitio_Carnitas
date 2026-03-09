@@ -36,7 +36,7 @@ const ProductGrid = () => {
                     viewport={{ once: true }}
                     transition={{ duration: 1.2 }}
                 >
-                    <span style={styles.subtitle}>MENÚ PATRÓN</span>
+                    <span style={styles.subtitle}>MENÚ PATRONA</span>
                     <h2 style={styles.title}>Selección Gourmet</h2>
                     <p style={styles.headerText}>
                         Cada plato es una obra maestra de la cocina tradicional, elevada con ingredientes de la más alta calidad y un proceso artesanal inigualable.

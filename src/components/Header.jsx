@@ -20,16 +20,20 @@ const Header = () => {
             <div className="container" style={styles.container}>
                 <motion.div
                     style={styles.logoContainer}
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.05 }}
                 >
-                    <motion.h1 style={styles.title}>
-                        <span style={styles.brandMain}>EL PATRÓN</span>
-                        <div style={styles.brandLine}></div>
-                        <span style={styles.brandSub}>CARNITAS ARTESANALES</span>
-                    </motion.h1>
+                    <img src={logo} alt="Carnitas La Patrona" style={styles.logoImg} />
                 </motion.div>
 
                 <nav style={styles.nav}>
+                    <motion.a
+                        href="#quienes-somos"
+                        className="nav-link"
+                        style={styles.navLink}
+                        whileHover={{ color: 'var(--accent)', opacity: 1, y: -3 }}
+                    >
+                        QUIÉNES SOMOS
+                    </motion.a>
                     <motion.a
                         href="#menu"
                         className="nav-link"
@@ -37,6 +41,14 @@ const Header = () => {
                         whileHover={{ color: 'var(--accent)', opacity: 1, y: -3 }}
                     >
                         NUESTRO MENÚ
+                    </motion.a>
+                    <motion.a
+                        href="#sucursales"
+                        className="nav-link"
+                        style={styles.navLink}
+                        whileHover={{ color: 'var(--accent)', opacity: 1, y: -3 }}
+                    >
+                        SUCURSALES
                     </motion.a>
                     <motion.a
                         href="#reviews"
@@ -82,7 +94,7 @@ const styles = {
         top: 0,
         left: 0,
         right: 0,
-        height: '100px',
+        height: '120px',
         backgroundColor: 'rgba(5, 5, 5, 0.4)',
         zIndex: 1000,
         display: 'flex',
@@ -102,35 +114,20 @@ const styles = {
     },
     logoContainer: {
         display: 'flex',
-        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 30px',
+        height: '120px',
+        backgroundColor: 'transparent',
     },
-    title: {
-        display: 'flex',
-        flexDirection: 'column',
-        margin: 0,
+    logoImg: {
+        height: '92px',
+        objectFit: 'contain',
+        filter: 'drop-shadow(0 5px 15px rgba(0,0,0,0.5))',
+        imageRendering: 'high-quality',
+        willChange: 'transform'
     },
-    brandMain: {
-        fontSize: '2rem',
-        fontFamily: 'var(--font-display)',
-        color: 'var(--accent)',
-        letterSpacing: '0.1em',
-        textTransform: 'uppercase',
-    },
-    brandLine: {
-        width: '100%',
-        height: '1px',
-        background: 'linear-gradient(90deg, transparent, var(--accent), transparent)',
-        margin: '0.1rem 0',
-        opacity: 0.4,
-    },
-    brandSub: {
-        fontSize: '0.65rem',
-        fontFamily: 'var(--font-sans)',
-        color: 'var(--primary)',
-        letterSpacing: '0.4em',
-        fontWeight: 700,
-        marginTop: '0.2rem',
-    },
+
     nav: {
         display: 'flex',
         alignItems: 'center',
