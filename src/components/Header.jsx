@@ -53,7 +53,7 @@ const styles = {
         left: 0,
         right: 0,
         height: '90px',
-        backgroundColor: 'rgba(10, 10, 10, 0.95)',
+        backgroundColor: 'var(--glass)',
         borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
         zIndex: 1000,
         display: 'flex',
