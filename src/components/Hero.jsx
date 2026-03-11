@@ -33,9 +33,9 @@ const Hero = () => {
                 style={styles.dynamicBg}
                 animate={{
                     background: [
-                        'radial-gradient(circle at 70% 50%, rgba(179, 84, 30, 0.1) 0%, transparent 70%)',
-                        'radial-gradient(circle at 30% 50%, rgba(179, 84, 30, 0.1) 0%, transparent 70%)',
-                        'radial-gradient(circle at 70% 50%, rgba(179, 84, 30, 0.1) 0%, transparent 70%)'
+                        'radial-gradient(circle at 70% 50%, rgba(255, 20, 147, 0.15) 0%, transparent 70%)',
+                        'radial-gradient(circle at 30% 50%, rgba(255, 20, 147, 0.15) 0%, transparent 70%)',
+                        'radial-gradient(circle at 70% 50%, rgba(255, 20, 147, 0.15) 0%, transparent 70%)'
                     ]
                 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
@@ -83,7 +83,7 @@ const Hero = () => {
                             href="#menu"
                             whileHover={{
                                 scale: 1.05,
-                                boxShadow: '0 20px 40px rgba(179, 84, 30, 0.3)',
+                                boxShadow: '0 20px 40px rgba(255, 20, 147, 0.4)',
                                 backgroundColor: 'var(--primary-dark)'
                             }}
                             whileTap={{ scale: 0.95 }}

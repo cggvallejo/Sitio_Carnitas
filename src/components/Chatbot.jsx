@@ -279,7 +279,15 @@ const Chatbot = () => {
                             ))}
                             {orderState === 'MP_CHECKOUT' && (
                                 <div style={{ width: '100%', marginTop: '1rem', animation: 'fadeIn 0.5s ease-in-out forwards' }}>
-                                    <MercadoPagoBtn amount={getOrderTotal()} />
+                                    <MercadoPagoBtn
+                                        amount={getOrderTotal()}
+                                        onPaymentReady={(data) => {
+                                            console.log("Chatbot payment success:", data);
+                                            // Optional: Move to CONFIRM state or automatically complete
+                                            setOrderState('CONFIRM');
+                                            addMessage('bot', '✅ ¡Pago recibido oink-reíblemente! Ahora, ¿enviamos los detalles de tu orden a WhatsApp?');
+                                        }}
+                                    />
                                 </div>
                             )}
                         </div>

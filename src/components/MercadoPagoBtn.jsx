@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useId } from 'react';
 
-const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
+const MercadoPagoBtn = ({ total, onPaymentReady }) => {
+    const amount = total; // Redirigir total a la constante interna
+
     const rawId = useId();
     const containerId = `paymentBrick_container_${rawId.replace(/:/g, '')}`;
     const controllerRef = useRef(null);
@@ -10,9 +12,11 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
         if (!window.MercadoPago) return;
         let isMounted = true;
 
-        const mp = new window.MercadoPago('APP_USR-39ce3633-4cdc-40c3-a549-b642b90740bd', {
+        const mpKey = import.meta.env.VITE_MP_PUBLIC_KEY || 'APP_USR-39ce3633-4cdc-40c3-a549-b642b90740bd';
+        const mp = new window.MercadoPago(mpKey, {
             locale: 'es-MX'
         });
+
         mpRef.current = mp;
 
         const bricksBuilder = mp.bricks();
@@ -20,11 +24,10 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
         const renderPaymentBrick = async (bricksBuilder) => {
             const container = document.getElementById(containerId);
             if (container) {
-                // Limpieza física total
                 container.innerHTML = `<div id="${containerId}_loading_msg"></div>`;
                 const loadingMsg = document.getElementById(`${containerId}_loading_msg`);
                 if (loadingMsg) {
-                    loadingMsg.innerHTML = '<p style="text-align:center;padding-top:2rem;color:#666;">Cargando módulo de pago seguro...</p>';
+                    loadingMsg.innerHTML = '<p style="text-align:center;padding-top:2rem;color:#e8d09f;font-family:var(--font-serif);">Iniciando pasarela de pago segura...</p>';
                 }
             }
 
@@ -32,12 +35,20 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
                 const settings = {
                     initialization: {
                         amount: amount,
+                        payer: {
+                            email: "test_user_123@testuser.com", // Placeholder
+                        },
                     },
                     customization: {
                         paymentMethods: {
                             creditCard: "all",
                             debitCard: "all",
                         },
+                        visual: {
+                            style: {
+                                theme: 'dark',
+                            }
+                        }
                     },
                     callbacks: {
                         onReady: () => {
@@ -45,6 +56,7 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
                             if (loadingElement) loadingElement.style.display = 'none';
                         },
                         onSubmit: ({ selectedPaymentMethod, formData }) => {
+                            // Enviar los datos al backend para procesar el pago
                             const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
                             return new Promise((resolve, reject) => {
                                 fetch(`${apiUrl}/process_payment`, {
@@ -57,21 +69,23 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
                                     .then(response => response.json())
                                     .then(data => {
                                         if (data.status === 'approved') {
-                                            alert("✅ ¡Pago APROBADO! ID: " + data.id);
+                                            alert("✅ ¡Oink! Pago aprobado con éxito. ¡Gracias por tu compra!");
+                                            if (onPaymentReady) onPaymentReady(data);
                                             resolve();
                                         } else {
-                                            alert("⚠️ Estado del pago: " + data.status);
+                                            alert("⚠️ Estado del pago: " + (data.status_detail || data.status));
                                             resolve();
                                         }
                                     })
                                     .catch(error => {
-                                        alert("❌ Error de comunicación.");
+                                        console.error("Communication Error:", error);
+                                        alert("❌ Error de comunicación con el servidor de pagos.");
                                         reject();
                                     });
                             });
                         },
                         onError: (error) => {
-                            console.error("MP Error:", error);
+                            console.error("MP Brick Error:", error);
                         },
                     },
                 };

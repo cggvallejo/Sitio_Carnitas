@@ -2,18 +2,18 @@
 @import url('https://fonts.cdnfonts.com/css/kg-perfect-penmanship');
 
 :root {
-  /* Obsidian Gold Palette */
-  --bg-color: #050505;
-  --bg-secondary: #0D0D0D;
-  --primary: #B3541E;
-  --primary-dark: #8E4A2D;
+  /* La Patrona Neon Palette */
+  --bg-color: #1a0524;
+  --bg-secondary: #2b0b3b;
+  --primary: #ff1493;
+  --primary-dark: #cc006e;
   --accent: #E8D09F;
   --accent-muted: #C5A059;
   --accent-light: #FBF4E4;
   --text-main: #F5F5F5;
-  --text-muted: #A0A0A0;
-  --glass-bg: rgba(20, 20, 20, 0.4);
-  --glass-border: rgba(232, 208, 159, 0.15);
+  --text-muted: #d0b0d0;
+  --glass-bg: rgba(30, 5, 45, 0.6);
+  --glass-border: rgba(255, 20, 147, 0.25);
 
   /* Typography */
   --font-display: 'KG Perfect Penmanship', sans-serif;
@@ -83,20 +83,20 @@ ul {
 
 /* Advanced Glassmorphism */
 .glass-premium {
-  background: rgba(10, 10, 10, 0.4);
+  background: var(--glass-bg);
   backdrop-filter: blur(25px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(232, 208, 159, 0.1);
+  border: 1px solid var(--glass-border);
   box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.6),
+    0 30px 60px rgba(26, 5, 36, 0.6),
     inset 0 0 0 1px rgba(255, 255, 255, 0.02);
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-premium:hover {
-  background: rgba(15, 15, 15, 0.6);
-  border-color: rgba(232, 208, 159, 0.3);
-  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+  background: rgba(43, 11, 59, 0.6);
+  border-color: rgba(255, 20, 147, 0.4);
+  box-shadow: 0 40px 80px rgba(26, 5, 36, 0.8), 0 0 20px rgba(255, 20, 147, 0.2);
 }
 
 .gpu-performance {
@@ -140,11 +140,11 @@ ul {
 
 /* Gold Utilities */
 .text-glow {
-  text-shadow: 0 0 20px rgba(232, 208, 159, 0.4);
+  text-shadow: 0 0 20px rgba(255, 20, 147, 0.6);
 }
 
 .gold-gradient-bg {
-  background: linear-gradient(135deg, #8E4A2D 0%, #B3541E 50%, #C5A059 100%);
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, #ff66b2 100%);
 }
 
 /* Scrollbar Premium */

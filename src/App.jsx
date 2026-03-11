@@ -43,7 +43,7 @@ function App() {
           <div className="container" style={styles.footerContent}>
             <span style={styles.footerBrand}>Carnitas La Patrona</span>
             <p style={{ fontSize: '0.8rem', letterSpacing: '0.1em', marginTop: '2rem' }}>
-              &copy; 2026 GUADALAJARA, JALISCO. TODOS LOS DERECHOS RESERVADOS.
+              &copy; 2026 CANCÚN, QUINTANA ROO. TODOS LOS DERECHOS RESERVADOS.
             </p>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '3rem', fontSize: '0.75rem', opacity: 0.5 }}>
               HECHO CON <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}><Heart size={12} fill="var(--primary)" color="var(--primary)" /></motion.div> PARA LOS AMANTES DEL BUEN TACO.
