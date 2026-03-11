@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import MercadoPagoBtn from './MercadoPagoBtn';
-import { MapPin, X } from 'lucide-react';
+import CheckoutProBtn from './CheckoutProBtn';
+import { MapPin, X, Trash2, Banknote, CreditCard, TabletSmartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { locationsData, getClosestBranch } from '../data/locations';
 
@@ -205,13 +206,8 @@ const CartSidebar = () => {
             case 'mercadopago':
                 return (
                     <div style={styles.selectionView}>
-                        <h4 style={styles.sectionTitle}>Finalizar Pago Online</h4>
-                        <div style={{ padding: '2rem', textAlign: 'center' }}>
-                            <MercadoPagoBtn cart={cart} total={cartTotal} />
-                            <p style={{ marginTop: '2rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                                Serás redirigido a una plataforma segura de pago.
-                            </p>
-                        </div>
+                        <h4 style={styles.sectionTitle}>Pago Online Seguro</h4>
+                        <CheckoutProBtn cart={cart} total={cartTotal} />
                     </div>
                 );
             default:
