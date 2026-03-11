@@ -44,6 +44,7 @@ const ProductGrid = () => {
                 </motion.div>
 
                 <motion.div
+                    className="product-grid"
                     style={styles.grid}
                     variants={containerVariants}
                     initial="hidden"

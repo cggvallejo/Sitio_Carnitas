@@ -196,3 +196,80 @@ ul {
     opacity: 1;
   }
 }
+
+/* ============================================================
+   RESPONSIVE — TABLETA (601px – 1024px)
+   ============================================================ */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 2rem;
+  }
+}
+
+/* Desktop: ocultar hamburguesa, mostrar nav */
+.nav-desktop { display: flex; }
+.mobile-right-header { display: none !important; }
+
+
+/* ============================================================
+   RESPONSIVE — MÓVIL (≤ 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+
+  .container {
+    padding: 0 1.2rem;
+  }
+
+  h1 { font-size: clamp(2.8rem, 10vw, 5rem) !important; }
+  h2 { font-size: clamp(2rem, 7vw, 3rem) !important; }
+
+  /* Ocultar nav en móvil, mostrar hamburguesa */
+  .nav-desktop { display: none !important; }
+  .mobile-right-header { display: flex !important; align-items: center; gap: 0.8rem; }
+
+  /* Hero: una columna */
+  .hero-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    text-align: center;
+  }
+  .hero-image-wrapper { height: 55vw !important; max-height: 320px; }
+  .hero-cta-group { flex-direction: column !important; align-items: center !important; gap: 1.5rem !important; }
+  .hero-floating-badge { display: none !important; }
+
+  /* Product grid: 1-2 columnas */
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  /* Cart sidebar: ancho completo */
+  .cart-sidebar { width: 100vw !important; right: 0 !important; }
+
+  /* Chatbot: reducido */
+  .chatbot-window {
+    width: calc(100vw - 2rem) !important;
+    right: 1rem !important;
+    bottom: 80px !important;
+    height: 75svh !important;
+    max-height: 560px;
+  }
+
+  /* Sections */
+  section { padding-top: 4rem !important; padding-bottom: 4rem !important; }
+
+  /* Grids genéricos */
+  .about-grid, .locations-grid, .reviews-grid, .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — MÓVIL PEQUEÑO (≤ 390px)
+   ============================================================ */
+@media (max-width: 390px) {
+  .container { padding: 0 1rem; }
+  .chatbot-window { width: calc(100vw - 1rem) !important; right: 0.5rem !important; }
+}

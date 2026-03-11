@@ -42,7 +42,7 @@ const Hero = () => {
             />
 
             <motion.div
-                className="container"
+                className="hero-container"
                 style={{ ...styles.container, opacity }}
                 variants={containerVariants}
                 initial="hidden"
@@ -78,7 +78,7 @@ const Hero = () => {
                         Elevamos la tradición a un nivel gourmet inolvidable. Cada bocado de nuestras carnitas cuenta una historia de paciencia, fuego y herencia.
                     </motion.p>
 
-                    <motion.div variants={itemVariants} style={styles.ctaGroup}>
+                    <motion.div className="hero-cta-group" variants={itemVariants} style={styles.ctaGroup}>
                         <motion.a
                             href="#menu"
                             whileHover={{
@@ -102,6 +102,7 @@ const Hero = () => {
                 </div>
 
                 <motion.div
+                    className="hero-image-wrapper"
                     style={{ ...styles.imageWrapper, y: y1 }}
                     initial={{ opacity: 0, scale: 0.8, x: 100 }}
                     animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -136,10 +137,8 @@ const Hero = () => {
                     </motion.div>
 
                     <motion.div
-                        style={{
-                            ...styles.floatingBadge,
-                            willChange: 'transform, opacity'
-                        }}
+                        className="hero-floating-badge"
+                        style={{ ...styles.floatingBadge, willChange: 'transform, opacity' }}
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 1.5, duration: 1 }}
