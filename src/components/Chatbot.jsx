@@ -49,9 +49,19 @@ const Chatbot = () => {
         { label: "⚖️ 1kg Maciza - $450", id: 103, price: 450 },
         { label: "⚖️ 1kg Chamorro - $450", id: 131, price: 450 },
         { label: "⚖️ 1kg Surtido - $450", id: 115, price: 450 },
-        // BEBIDAS Y COMPLEMENTOS
-        { label: "🥤 Refresco - $25", id: 10, price: 25 },
-        { label: "🍷 Agua Natural 500ml - $30", id: 11, price: 30 },
+        // BEBIDAS (populares en Cancún, Q.Roo)
+        { label: "🥤 Coca-Cola - $25",             id: 10,  price: 25 },
+        { label: "🥤 Pepsi - $25",                 id: 200, price: 25 },
+        { label: "🥤 Sprite - $25",                id: 201, price: 25 },
+        { label: "🥤 Jarritos Tamarindo - $25",    id: 202, price: 25 },
+        { label: "🥤 Jarritos Mandarina - $25",    id: 203, price: 25 },
+        { label: "🥤 Manzanita Sol - $25",         id: 204, price: 25 },
+        { label: "🥤 Sidral Mundet - $25",         id: 205, price: 25 },
+        { label: "🥤 Boing Guayaba - $25",         id: 206, price: 25 },
+        { label: "🥥 Agua de Coco Natural - $30",  id: 207, price: 30 },
+        { label: "🌸 Agua de Horchata - $30",      id: 11,  price: 30 },
+        { label: "🌺 Agua de Jamaica - $30",       id: 208, price: 30 },
+        // COMPLEMENTOS
         { label: "🌶️ Salsa Especial 250ml - $35", id: 6, price: 35 },
     ];
 
@@ -75,7 +85,12 @@ const Chatbot = () => {
             'Tortas': menuOptions.filter(o => o.label.startsWith('🥖')),
             'Gorditas': menuOptions.filter(o => o.label.startsWith('🫓')),
             'Kilos': menuOptions.filter(o => o.label.startsWith('⚖️')),
-            'Bebidas': menuOptions.filter(o => o.label.startsWith('🥤') || o.label.startsWith('🍷') || o.label.startsWith('🌶️')),
+            'Bebidas': menuOptions.filter(o => 
+                o.label.startsWith('🥤') || 
+                o.label.startsWith('🥥') || 
+                o.label.startsWith('🌸') || 
+                o.label.startsWith('🌺')
+            ),
         };
         return catMap[menuFilter] || [];
     };
@@ -86,7 +101,7 @@ const Chatbot = () => {
                 return [
                     ...getFilteredMenuOptions().map(o => o.label),
                     '↩ Ver categorias',
-                    'Total y Pagar'
+                    'Total a pagar'
                 ];
             }
             return [
@@ -169,7 +184,7 @@ const Chatbot = () => {
                         const newItems = [...currentOrder.items, { name: prodDb.name, price: prodDb.price }];
                         const newTotal = newItems.reduce((sum, item) => sum + item.price, 0);
                         setCurrentOrder(prevOrder => ({ ...prevOrder, items: newItems }));
-                        addMessage('bot', `¡Agregado ${prodDb.name}! Lleva $${newTotal.toFixed(2)}. ¿Agregás algo más o "Total y Pagar"?`);
+                        addMessage('bot', `¡Agregado ${prodDb.name}! Total de la cuenta = $${newTotal.toFixed(2)}. ¿Agregás algo más?`);
                     }
                 }
             }

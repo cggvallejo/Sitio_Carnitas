@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useId } from 'react';
 
-const MercadoPagoBtn = ({ total, onPaymentReady }) => {
-    const amount = total; // Redirigir total a la constante interna
+const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
 
     const rawId = useId();
     const containerId = `paymentBrick_container_${rawId.replace(/:/g, '')}`;
@@ -134,30 +133,32 @@ const MercadoPagoBtn = ({ total, onPaymentReady }) => {
 
 const styles = {
     container: {
-        marginTop: '2rem',
-        padding: '3rem',
-        backgroundColor: 'rgba(232, 208, 159, 0.05)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '1rem',
-        minHeight: '500px',
-        border: '1px solid rgba(232, 208, 159, 0.15)',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
+        marginTop: '1rem',
+        padding: '1.5rem',
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        borderRadius: '1.2rem',
+        minHeight: '400px',
+        border: '1px solid rgba(232, 208, 159, 0.1)',
+        boxShadow: '0 15px 35px rgba(0,0,0,0.4)',
+        width: '100%',
+        maxWidth: '100%',
+        overflow: 'hidden'
     },
     loadingMsg: {
         textAlign: 'center',
-        paddingTop: '5rem',
+        paddingTop: '4rem',
         color: 'var(--accent)',
         fontFamily: 'var(--font-serif)',
         fontStyle: 'italic',
-        fontSize: '1.2rem',
+        fontSize: '1rem',
     },
     note: {
         display: 'block',
-        marginTop: '2rem',
-        fontSize: '0.75rem',
+        marginTop: '1.5rem',
+        fontSize: '0.7rem',
         color: 'var(--text-muted)',
-        opacity: 0.8,
-        letterSpacing: '0.05em'
+        opacity: 0.6,
+        lineHeight: '1.4'
     }
 }
 

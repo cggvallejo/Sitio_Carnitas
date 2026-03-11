@@ -94,22 +94,20 @@ cortes.forEach(corte => {
 
 export const products = [
     ...generatedProducts,
-    {
-        id: 10,
-        name: 'Refrescos',
-        description: 'Coca-Cola, Sprite, Sidral Mundet. Elige tu favorito.',
-        price: 25.00,
-        image: bebidasImg,
-        category: 'Bebidas'
-    },
-    {
-        id: 11,
-        name: 'Aguas Naturales (Medio Litro)',
-        description: 'Horchata o Jamaica natural, recién hecha para acompañar.',
-        price: 30.00,
-        image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&q=80&w=400',
-        category: 'Bebidas'
-    },
+    // ── Refrescos (populares en Cancún, Q.Roo) ──────────────────────
+    { id: 10,  name: 'Coca-Cola',             description: 'La clásica Coca-Cola bien fría. La #1 en México.',                    price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 200, name: 'Pepsi',                 description: 'Pepsi fría y refrescante para acompañar tu pedido.',                   price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 201, name: 'Sprite',                description: 'Sprite limón‑lima, perfecta para el calor caribeño.',                  price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 202, name: 'Jarritos Tamarindo',    description: 'Jarritos de tamarindo, favorito del sureste mexicano.',                price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 203, name: 'Jarritos Mandarina',    description: 'Jarritos de mandarina, el sabor tropical de Quintana Roo.',           price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 204, name: 'Manzanita Sol',         description: 'Refresco de manzana, muy popular en el Caribe mexicano.',             price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 205, name: 'Sidral Mundet',         description: 'El sidral de manzana más clásico de México.',                         price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 206, name: 'Boing Guayaba',         description: 'Jugo Boing de guayaba, popular en el sureste y Caribe.',              price: 25.00, image: bebidasImg, category: 'Bebidas' },
+    { id: 207, name: 'Agua de Coco Natural',  description: 'Agua de coco 100% natural, típica de la zona costera de Cancún.',     price: 30.00, image: bebidasImg, category: 'Bebidas' },
+    // ── Aguas naturales ──────────────────────────────────────────────
+    { id: 11,  name: 'Agua de Horchata (500ml)', description: 'Horchata casera con canela, bien fría.',                           price: 30.00, image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&q=80&w=400', category: 'Bebidas' },
+    { id: 208, name: 'Agua de Jamaica (500ml)',  description: 'Jamaica natural con toque de limón, recién preparada.',             price: 30.00, image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&q=80&w=400', category: 'Bebidas' },
+    // ── Complementos ─────────────────────────────────────────────────
     {
         id: 6,
         name: 'Salsa Especial (250ml)',
