@@ -51,7 +51,6 @@ const styles = {
     container: {
         maxWidth: '1000px',
         margin: '0 auto',
-        padding: '0 2rem',
         position: 'relative',
         zIndex: 2,
     },

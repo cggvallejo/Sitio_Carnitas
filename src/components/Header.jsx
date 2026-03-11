@@ -132,7 +132,6 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '0 2.5rem',
         maxWidth: '1600px',
         margin: '0 auto',
         width: '100%',

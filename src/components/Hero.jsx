@@ -42,7 +42,7 @@ const Hero = () => {
             />
 
             <motion.div
-                className="hero-container"
+                className="container hero-container"
                 style={{ ...styles.container, opacity }}
                 variants={containerVariants}
                 initial="hidden"
@@ -55,7 +55,7 @@ const Hero = () => {
                     </motion.div>
 
                     <motion.h1 style={styles.title} variants={containerVariants}>
-                        <div style={{ overflow: 'hidden' }}>
+                        <div>
                             <motion.span
                                 variants={itemVariants}
                                 className="metallic-text"
@@ -64,7 +64,7 @@ const Hero = () => {
                                 El Arte de la
                             </motion.span>
                         </div>
-                        <div style={{ overflow: 'hidden' }}>
+                        <div>
                             <motion.span
                                 variants={itemVariants}
                                 style={{ ...styles.titleHighlight, display: 'inline-block' }}
@@ -190,7 +190,7 @@ const styles = {
     },
     container: {
         display: 'grid',
-        gridTemplateColumns: '1.4fr 1fr',
+        gridTemplateColumns: '1.2fr 1fr',
         alignItems: 'center',
         gap: '6rem',
         zIndex: 2,
@@ -213,7 +213,7 @@ const styles = {
     },
     title: {
         fontSize: 'clamp(4rem, 10vw, 8.5rem)',
-        lineHeight: '1.25',
+        lineHeight: '1.4',
         marginBottom: '3rem',
         letterSpacing: '-0.04em',
         fontFamily: 'var(--font-display)',
