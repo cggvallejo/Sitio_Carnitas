@@ -1,6 +1,6 @@
-# 🌮 Carnitas "El Patrón" - E-commerce
+# 🌮 Carnitas La Patrona
 
-Bienvenido al repositorio oficial de **Carnitas "El Patrón"**, una plataforma de comercio electrónico moderna, rápida y elegante diseñada para ofrecer la mejor experiencia en la compra de carnitas artesanales.
+Bienvenido al repositorio oficial de **Carnitas La Patrona**, una plataforma moderna, rápida y elegante diseñada para ofrecer la mejor experiencia en la compra de carnitas artesanales.
 
 ---
 
@@ -82,4 +82,4 @@ Este proyecto es para fines demostrativos y comerciales. Consulta con el propiet
 
 ---
 
-Desarrollado con ❤️ para **Carnitas "El Patrón"**.
+Desarrollado con ❤️ para **Carnitas La Patrona**.
