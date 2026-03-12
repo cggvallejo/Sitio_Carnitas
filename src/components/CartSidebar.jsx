@@ -34,10 +34,19 @@ const CartSidebar = () => {
             locText = `Para recoger en sucursal: ${selectedBranch?.name || 'No seleccionada'}`;
         }
 
-        const phone = "523312345678"; // Reemplazo a número simulado
+        // Usar la sucursal seleccionada, si no hay, la primera de locationsData
+        const branchToUse = selectedBranch || locationsData[0];
+        
+        // Limpiar el teléfono (quitar espacios, guiones, etc.)
+        let cleanPhone = branchToUse.phone.replace(/\D/g, '');
+        // Si no empieza con código de país (52 para México), agregarlo (asumiendo números locales de 10 dígitos)
+        if (cleanPhone.length === 10) {
+            cleanPhone = '52' + cleanPhone;
+        }
+
         const itemsList = cart.map(item => `${item.quantity}x ${item.name}`).join(', ');
         const text = encodeURIComponent(`¡Hola Patrona!\nMe gustaría hacer un pedido:\n\n${itemsList}\n\nTotal: $${cartTotal.toFixed(2)}\nMetodo de Pago: ${methodText}\nUbicación:\n${locText}\n\nMuchas gracias.`);
-        window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
+        window.open(`https://wa.me/${cleanPhone}?text=${text}`, '_blank');
     };
 
     const handleLocationRequest = () => {

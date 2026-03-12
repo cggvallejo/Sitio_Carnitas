@@ -240,7 +240,20 @@ const Chatbot = () => {
                     const wpMsg = `¡Hola! Vengo de parte de Porkbot 🐷\nMi pedido es:\n\n${itemsList}\nTotal: $${getOrderTotal().toFixed(2)}\n*Para:* ${currentOrder.location}\n*Pago:* ${currentOrder.payment}\n\n¡Gracias!`;
 
                     setTimeout(() => {
-                        window.open(`https://wa.me/523312345678?text=${encodeURIComponent(wpMsg)}`, '_blank');
+                        // Determinar la sucursal buscando coincidencias en currentOrder.location 
+                        // con los nombres de las sucursales, si no la encuentra usar Matrix.
+                        let branchToUse = locationsData[0];
+                        for (const loc of locationsData) {
+                             if (currentOrder.location && currentOrder.location.includes(loc.name)) {
+                                 branchToUse = loc;
+                                 break;
+                             }
+                        }
+
+                        let cleanPhone = branchToUse.phone.replace(/\D/g, '');
+                        if (cleanPhone.length === 10) cleanPhone = '52' + cleanPhone;
+
+                        window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(wpMsg)}`, '_blank');
                         // Reset
                         setOrderState('MENU');
                         setCurrentOrder({ items: [], location: '', payment: '' });
