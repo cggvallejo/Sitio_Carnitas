@@ -35,3 +35,6 @@ dist-ssr
 # Temporary directories
 .tmp.driveupload/
 .tmp.driveupload/*
+
+# Windows Files
+desktop.ini
