@@ -21,7 +21,7 @@ const Locations = () => {
                     </p>
                 </motion.div>
 
-                <div style={styles.grid}>
+                <div style={styles.grid} className="locations-grid">
                     {locationsData.map((loc, index) => (
                         <motion.div
                             key={loc.id}

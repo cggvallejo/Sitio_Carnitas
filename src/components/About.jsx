@@ -10,7 +10,7 @@ const About = () => {
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 1, ease: 'easeOut' }}
                     style={styles.content}
-                    className="glass-premium"
+                    className="glass-premium about-content"
                 >
                     <h2 className="metallic-text" style={styles.title}>Quiénes Somos</h2>
                     <motion.div

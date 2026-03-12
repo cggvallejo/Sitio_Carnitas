@@ -28,7 +28,7 @@ const Hero = () => {
     };
 
     return (
-        <section style={styles.hero}>
+        <section style={styles.hero} className="hero-section">
             <motion.div
                 style={styles.dynamicBg}
                 animate={{

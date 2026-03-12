@@ -78,7 +78,7 @@ const Reviews = () => {
                     </motion.h2>
                 </div>
 
-                <div style={styles.formCard} className="glass-premium">
+                <div style={styles.formCard} className="glass-premium reviews-form">
                     <AnimatePresence mode="wait">
                         {!isSubmitted ? (
                             <motion.form
@@ -178,6 +178,7 @@ const Reviews = () => {
                     </motion.h3>
                     <motion.div
                         style={styles.listGrid}
+                        className="reviews-grid"
                         variants={{
                             hidden: { opacity: 0 },
                             visible: {
