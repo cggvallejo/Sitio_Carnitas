@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Trash2, Save, ShoppingBag, Edit3, Image as ImageIcon } from 'lucide-react';
+import { Plus, Trash2, Save, ShoppingBag, Edit3, Image as ImageIcon, Loader2 } from 'lucide-react';
+import ProcessModal from './ProcessModal';
 
 const ProductManager = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    
+    // Status Modal State
+    const [modal, setModal] = useState({
+        isOpen: false,
+        progress: 0,
+        logs: [],
+        title: '',
+        status: 'loading' // 'loading' | 'success' | 'error'
+    });
 
     const token = localStorage.getItem('adminToken');
 
@@ -25,10 +35,26 @@ const ProductManager = () => {
         fetchProducts();
     }, []);
 
+    const addLog = (message, type = 'default') => {
+        setModal(prev => ({
+            ...prev,
+            logs: [...prev.logs, { message, type }]
+        }));
+    };
+
     const handleSave = async () => {
-        setSaving(true);
-        setMessage('');
+        setModal({
+            isOpen: true,
+            progress: 10,
+            title: 'Guardando Cambios en el Menú',
+            status: 'loading',
+            logs: [{ message: 'Preparando datos de productos...', type: 'info' }]
+        });
+
         try {
+            setModal(prev => ({ ...prev, progress: 30 }));
+            addLog('Enviando menú actualizado al servidor...');
+
             const res = await fetch('http://localhost:3000/api/admin/products', {
                 method: 'PUT',
                 headers: { 
@@ -37,16 +63,29 @@ const ProductManager = () => {
                 },
                 body: JSON.stringify(products)
             });
+
+            const result = await res.json();
+
             if (res.ok) {
-                setMessage('🎉 ¡Menú guardado con éxito!');
-                setTimeout(() => setMessage(''), 3000);
+                setModal(prev => ({ ...prev, progress: 60 }));
+                addLog('✓ Base de datos local actualizada correctamente.', 'success');
+                addLog('Iniciando sincronización con GitHub...', 'info');
+
+                if (result.git && result.git.success) {
+                    setModal(prev => ({ ...prev, progress: 100, status: 'success' }));
+                    addLog('✓ Sincronización Git completada exitosamente.', 'success');
+                } else {
+                    setModal(prev => ({ ...prev, progress: 90, status: 'error' }));
+                    addLog('⚠ Error en la sincronización Git.', 'error');
+                    if (result.git && result.git.stderr) addLog(`Error: ${result.git.stderr}`, 'error');
+                }
             } else {
-                setMessage('❌ Error al guardar');
+                setModal(prev => ({ ...prev, status: 'error' }));
+                addLog('❌ Error al guardar datos en el servidor.', 'error');
             }
         } catch (err) {
-            setMessage('❌ Error de conexión');
-        } finally {
-            setSaving(false);
+            setModal(prev => ({ ...prev, status: 'error' }));
+            addLog(`❌ Error de conexión: ${err.message}`, 'error');
         }
     };
 
@@ -75,24 +114,49 @@ const ProductManager = () => {
 
     const handleFileUpload = async (id, file) => {
         if (!file) return;
+
+        setModal({
+            isOpen: true,
+            progress: 10,
+            title: 'Subiendo Imagen',
+            status: 'loading',
+            logs: [{ message: `Preparando archivo: ${file.name}`, type: 'info' }]
+        });
+
         const formData = new FormData();
         formData.append('image', file);
 
         try {
+            setModal(prev => ({ ...prev, progress: 40 }));
+            addLog('Subiendo archivo al servidor comercial...');
+
             const res = await fetch('http://localhost:3000/api/admin/upload', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
             const data = await res.json();
-            if (data.url) {
+            
+            if (res.ok && data.url) {
                 handleChange(id, 'image', data.url);
+                setModal(prev => ({ ...prev, progress: 70 }));
+                addLog('✓ Archivo subido correctamente.', 'success');
+                addLog('Sincronizando nueva imagen con el repositorio...', 'info');
+
+                if (data.git && data.git.success) {
+                    setModal(prev => ({ ...prev, progress: 100, status: 'success' }));
+                    addLog('✓ Sincronización de imagen completada.', 'success');
+                } else {
+                    setModal(prev => ({ ...prev, progress: 95, status: 'error' }));
+                    addLog('⚠ La imagen se subió pero el push a Git falló.', 'error');
+                }
             } else {
-                alert('Error al subir imagen');
+                setModal(prev => ({ ...prev, status: 'error' }));
+                addLog('❌ Error al procesar la subida en el servidor.', 'error');
             }
         } catch (err) {
-            console.error("Upload error:", err);
-            alert('Error de conexión al subir');
+            setModal(prev => ({ ...prev, status: 'error' }));
+            addLog(`❌ Error de subida: ${err.message}`, 'error');
         }
     };
 
@@ -202,6 +266,15 @@ const ProductManager = () => {
                     </motion.div>
                 ))}
             </div>
+
+            <ProcessModal 
+                isOpen={modal.isOpen}
+                title={modal.title}
+                progress={modal.progress}
+                logs={modal.logs}
+                status={modal.status}
+                onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 };

@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Save, MapPin, Phone, Clock, ExternalLink, RefreshCw } from 'lucide-react';
+import { Save, MapPin, Phone, Clock, ExternalLink, RefreshCw, Loader2 } from 'lucide-react';
+import ProcessModal from './ProcessModal';
 
 const LocationManager = () => {
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    
+    // Status Modal State
+    const [modal, setModal] = useState({
+        isOpen: false,
+        progress: 0,
+        logs: [],
+        title: '',
+        status: 'loading' // 'loading' | 'success' | 'error'
+    });
 
     const token = localStorage.getItem('adminToken');
 
@@ -25,10 +35,26 @@ const LocationManager = () => {
         fetchLocations();
     }, []);
 
+    const addLog = (message, type = 'default') => {
+        setModal(prev => ({
+            ...prev,
+            logs: [...prev.logs, { message, type }]
+        }));
+    };
+
     const handleSave = async () => {
-        setSaving(true);
-        setMessage('');
+        setModal({
+            isOpen: true,
+            progress: 10,
+            title: 'Actualizando Sucursales',
+            status: 'loading',
+            logs: [{ message: 'Validando datos de ubicación...', type: 'info' }]
+        });
+
         try {
+            setModal(prev => ({ ...prev, progress: 30 }));
+            addLog('Enviando cambios al servidor central...');
+
             const res = await fetch('http://localhost:3000/api/admin/locations', {
                 method: 'PUT',
                 headers: { 
@@ -37,16 +63,29 @@ const LocationManager = () => {
                 },
                 body: JSON.stringify(locations)
             });
+
+            const result = await res.json();
+
             if (res.ok) {
-                setMessage('📍 Sucursales actualizadas con éxito!');
-                setTimeout(() => setMessage(''), 3000);
+                setModal(prev => ({ ...prev, progress: 70 }));
+                addLog('✓ Información guardada localmente.', 'success');
+                addLog('Sincronizando puntos de venta con GitHub...', 'info');
+
+                if (result.git && result.git.success) {
+                    setModal(prev => ({ ...prev, progress: 100, status: 'success' }));
+                    addLog('✓ Repositorio actualizado con éxito.', 'success');
+                } else {
+                    setModal(prev => ({ ...prev, progress: 90, status: 'error' }));
+                    addLog('⚠ Falló la sincronización con GitHub.', 'error');
+                    if (result.git && result.git.stderr) addLog(`Error: ${result.git.stderr}`, 'error');
+                }
             } else {
-                setMessage('❌ Error al guardar');
+                setModal(prev => ({ ...prev, status: 'error' }));
+                addLog('❌ Error al procesar solicitud en el servidor.', 'error');
             }
         } catch (err) {
-            setMessage('❌ Error de conexión');
-        } finally {
-            setSaving(false);
+            setModal(prev => ({ ...prev, status: 'error' }));
+            addLog(`❌ Error de red: ${err.message}`, 'error');
         }
     };
 
@@ -166,6 +205,15 @@ const LocationManager = () => {
                     </motion.div>
                 ))}
             </div>
+
+            <ProcessModal 
+                isOpen={modal.isOpen}
+                title={modal.title}
+                progress={modal.progress}
+                logs={modal.logs}
+                status={modal.status}
+                onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 };

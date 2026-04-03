@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Save, ShieldCheck, Key, User, Lock, AlertTriangle } from 'lucide-react';
+import { Save, ShieldCheck, Key, User, Lock, AlertTriangle, CheckCircle, XCircle, RefreshCw, Loader2 } from 'lucide-react';
+import ProcessModal from './ProcessModal';
 
 const ConfigManager = () => {
     const [config, setConfig] = useState({
@@ -15,6 +16,18 @@ const ConfigManager = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    
+    // Status Modal State
+    const [modal, setModal] = useState({
+        isOpen: false,
+        progress: 0,
+        logs: [],
+        title: '',
+        status: 'loading' // 'loading' | 'success' | 'error'
+    });
+
+    const [validatingMP, setValidatingMP] = useState(false);
+    const [mpStatus, setMpStatus] = useState(null); // null | 'valid' | 'invalid'
 
     const token = localStorage.getItem('adminToken');
 
@@ -35,6 +48,40 @@ const ConfigManager = () => {
         fetchConfig();
     }, [token]);
 
+    const addLog = (message, type = 'default') => {
+        setModal(prev => ({
+            ...prev,
+            logs: [...prev.logs, { message, type }]
+        }));
+    };
+
+    const handleValidateMP = async () => {
+        if (!config.mp_access_token) return;
+        setValidatingMP(true);
+        setMpStatus(null);
+        try {
+            const res = await fetch('http://localhost:3000/api/admin/validate-mp', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ access_token: config.mp_access_token })
+            });
+            const data = await res.json();
+            if (data.success) {
+                setMpStatus('valid');
+            } else {
+                setMpStatus('invalid');
+                alert(`Error de validación: ${data.details}`);
+            }
+        } catch (err) {
+            setMpStatus('invalid');
+        } finally {
+            setValidatingMP(false);
+        }
+    };
+
     const handleSave = async (e) => {
         e.preventDefault();
         if (passwords.new_password && passwords.new_password !== passwords.confirm_password) {
@@ -42,11 +89,20 @@ const ConfigManager = () => {
             return;
         }
 
-        setSaving(true);
-        setMessage('');
+        setModal({
+            isOpen: true,
+            progress: 10,
+            title: 'Actualizando Configuración',
+            status: 'loading',
+            logs: [{ message: 'Iniciando proceso de actualización...', type: 'info' }]
+        });
+
         try {
             const body = { ...config };
             if (passwords.new_password) body.new_password = passwords.new_password;
+
+            setModal(prev => ({ ...prev, progress: 30 }));
+            addLog('Enviando datos al servidor principal...');
 
             const res = await fetch('http://localhost:3000/api/admin/config', {
                 method: 'PUT',
@@ -56,17 +112,32 @@ const ConfigManager = () => {
                 },
                 body: JSON.stringify(body)
             });
+            
+            const result = await res.json();
+
             if (res.ok) {
-                setMessage('🛡️ ¡Configuración actualizada correctamente!');
+                setModal(prev => ({ ...prev, progress: 60 }));
+                addLog('✓ Datos guardados en la base de datos local.', 'success');
+                addLog('Iniciando sincronización con el repositorio de GitHub...', 'info');
+
+                if (result.git && result.git.success) {
+                    setModal(prev => ({ ...prev, progress: 100, status: 'success' }));
+                    addLog('✓ Sincronización Git completada con éxito.', 'success');
+                    if (result.git.stdout) addLog(`Output: ${result.git.stdout}`);
+                } else {
+                    setModal(prev => ({ ...prev, progress: 90, status: 'error' }));
+                    addLog('⚠ Error en sincronización Git.', 'error');
+                    if (result.git && result.git.stderr) addLog(`Error: ${result.git.stderr}`, 'error');
+                }
+                
                 setPasswords({ new_password: '', confirm_password: '' });
-                setTimeout(() => setMessage(''), 3000);
             } else {
-                setMessage('❌ Error al actualizar');
+                setModal(prev => ({ ...prev, status: 'error' }));
+                addLog('❌ Error crítico al guardar en el servidor.', 'error');
             }
         } catch (err) {
-            setMessage('❌ Error de conexión');
-        } finally {
-            setSaving(false);
+            setModal(prev => ({ ...prev, status: 'error' }));
+            addLog(`❌ Error de red: ${err.message}`, 'error');
         }
     };
 
@@ -104,13 +175,32 @@ const ConfigManager = () => {
                             <label style={styles.label}>ACCESS TOKEN (PRODUCCIÓN)</label>
                             <div style={styles.row}>
                                 <Lock size={16} />
-                                <input 
-                                    type="password"
-                                    style={styles.input} 
-                                    value={config.mp_access_token} 
-                                    onChange={(e) => setConfig({ ...config, mp_access_token: e.target.value })}
-                                    placeholder="APP_USR-..."
-                                />
+                                <div className="flex-1 flex gap-4">
+                                    <input 
+                                        type="password"
+                                        style={styles.input} 
+                                        value={config.mp_access_token} 
+                                        onChange={(e) => setConfig({ ...config, mp_access_token: e.target.value })}
+                                        placeholder="APP_USR-..."
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={handleValidateMP}
+                                        disabled={validatingMP || !config.mp_access_token}
+                                        className={`px-4 rounded-xl flex items-center gap-2 font-bold transition-all ${
+                                            mpStatus === 'valid' ? 'bg-green-500/20 text-green-500 border border-green-500/30' :
+                                            mpStatus === 'invalid' ? 'bg-red-500/20 text-red-500 border border-red-500/30' :
+                                            'bg-white/5 text-white/60 hover:bg-white/10'
+                                        }`}
+                                    >
+                                        {validatingMP ? <Loader2 className="animate-spin" size={16} /> : 
+                                         mpStatus === 'valid' ? <CheckCircle size={16} /> :
+                                         mpStatus === 'invalid' ? <XCircle size={16} /> : <RefreshCw size={16} />}
+                                        {validatingMP ? '...' : 
+                                         mpStatus === 'valid' ? 'VÁLIDO' :
+                                         mpStatus === 'invalid' ? 'ERRÓNEO' : 'VERIFICAR'}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -156,7 +246,6 @@ const ConfigManager = () => {
                 </section>
 
                 <div style={styles.footer}>
-                    {message && <p style={styles.statusMsg}>{message}</p>}
                     <motion.button 
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -164,10 +253,19 @@ const ConfigManager = () => {
                         style={styles.saveBtn}
                         disabled={saving}
                     >
-                        <Save size={18} /> {saving ? 'GUARDANDO...' : 'APLICAR CAMBIOS DE SEGURIDAD'}
+                        <Save size={18} /> APLICAR CAMBIOS DE SEGURIDAD
                     </motion.button>
                 </div>
             </form>
+
+            <ProcessModal 
+                isOpen={modal.isOpen}
+                title={modal.title}
+                progress={modal.progress}
+                logs={modal.logs}
+                status={modal.status}
+                onClose={() => setModal(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 };

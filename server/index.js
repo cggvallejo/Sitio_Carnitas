@@ -9,6 +9,9 @@ import path from 'path';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 dotenv.config();
 
@@ -64,18 +67,18 @@ const getMPClient = async () => {
 };
 
 // --- Git Helpers ---
-const gitAutoCommit = (message) => {
+const gitAutoCommit = async (message) => {
     const cmd = `git add . && git commit -m "Admin: ${message}" && git push`;
-    exec(cmd, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`[Git Error]: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`[Git Stderr]: ${stderr}`);
-        }
-        console.log(`[Git Success]: ${stdout}`);
-    });
+    try {
+        const { stdout, stderr } = await execAsync(cmd);
+        return { success: true, stdout, stderr };
+    } catch (error) {
+        return { 
+            success: false, 
+            stdout: error.stdout || '', 
+            stderr: error.stderr || error.message 
+        };
+    }
 };
 
 // --- Auth Middleware ---
@@ -117,27 +120,36 @@ app.get('/api/locations', async (req, res) => {
 });
 
 // --- Admin API Routes (Protected) ---
-app.post('/api/admin/upload', authenticateToken, upload.single('image'), (req, res) => {
+app.post('/api/admin/upload', authenticateToken, upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
     const fileUrl = `/uploads/${req.file.filename}`;
-    gitAutoCommit(`Foto subida: ${req.file.filename}`);
-    res.json({ url: fileUrl });
+    const gitResult = await gitAutoCommit(`Foto subida: ${req.file.filename}`);
+    res.json({ 
+        url: fileUrl,
+        git: gitResult
+    });
 });
 
 app.put('/api/admin/products', authenticateToken, async (req, res) => {
     const db = await readDB();
     db.products = req.body;
     await writeDB(db);
-    gitAutoCommit('Actualización de menú de productos');
-    res.json({ message: 'Menú actualizado correctamente' });
+    const gitResult = await gitAutoCommit('Actualización de menú de productos');
+    res.json({ 
+        message: 'Menú actualizado correctamente',
+        git: gitResult
+    });
 });
 
 app.put('/api/admin/locations', authenticateToken, async (req, res) => {
     const db = await readDB();
     db.locations = req.body;
     await writeDB(db);
-    gitAutoCommit('Actualización de sucursales');
-    res.json({ message: 'Sucursales actualizadas correctamente' });
+    const gitResult = await gitAutoCommit('Actualización de sucursales');
+    res.json({ 
+        message: 'Sucursales actualizadas correctamente',
+        git: gitResult
+    });
 });
 
 app.get('/api/admin/config', authenticateToken, async (req, res) => {
@@ -159,8 +171,37 @@ app.put('/api/admin/config', authenticateToken, async (req, res) => {
     }
     
     await writeDB(db);
-    gitAutoCommit('Actualización de configuración administrativa');
-    res.json({ message: 'Configuración actualizada correctamente' });
+    const gitResult = await gitAutoCommit('Actualización de configuración administrativa');
+    res.json({ 
+        message: 'Configuración actualizada correctamente',
+        git: gitResult
+    });
+});
+
+app.post('/api/admin/validate-mp', authenticateToken, async (req, res) => {
+    const { access_token } = req.body;
+    if (!access_token) return res.status(400).json({ error: 'Token requerido' });
+    
+    try {
+        const response = await fetch('https://api.mercadopago.com/v1/payment_methods', {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        });
+        
+        if (response.ok) {
+            res.json({ success: true, message: 'Credenciales válidas' });
+        } else {
+            const errorData = await response.json();
+            res.status(401).json({ 
+                success: false, 
+                message: 'No se pudo verificar el token',
+                details: errorData.message || 'Error desconocido'
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
 // --- Mercado Pago Payment Process ---
