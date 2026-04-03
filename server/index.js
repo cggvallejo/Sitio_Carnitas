@@ -31,6 +31,17 @@ app.use(express.json());
 // Serve static files from public
 app.use(express.static(path.join(process.cwd(), 'public')));
 
+// Serve frontend build if it exists
+const distPath = path.join(process.cwd(), 'dist');
+if (existsSync(distPath)) {
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+            res.sendFile(path.join(distPath, 'index.html'));
+        }
+    });
+}
+
 // --- Multer Configuration ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {

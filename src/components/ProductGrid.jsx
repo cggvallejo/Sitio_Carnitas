@@ -6,6 +6,7 @@ const ProductGrid = () => {
     const { addToCart } = useCart();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -15,6 +16,8 @@ const ProductGrid = () => {
                 const data = await res.json();
                 setProducts(data);
             } catch (err) {
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                setError(`No pudimos cargar el menú desde ${apiUrl}/api/products. Revisa la consola del navegador.`);
                 console.error("Error fetching products:", err);
             } finally {
                 setLoading(false);
@@ -47,6 +50,19 @@ const ProductGrid = () => {
     if (loading) return (
         <div style={{ height: '30vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} style={{ width: '40px', height: '40px', border: '3px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />
+        </div>
+    );
+
+    if (error) return (
+        <div style={{ height: '30vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+            <p style={{ color: 'var(--accent)', fontSize: '1.2rem', textAlign: 'center', marginBottom: '1rem' }}>{error}</p>
+            <button onClick={() => window.location.reload()} style={styles.addBtn}>REINTENTAR</button>
+        </div>
+    );
+
+    if (products.length === 0) return (
+        <div style={{ height: '30vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>El menú está vacío por ahora. Vuelve pronto.</p>
         </div>
     );
 
