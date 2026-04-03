@@ -22,13 +22,13 @@
     }
   ],
   "products": [
-    { "id": 100, "name": "Taco de Maciza", "description": "Pura carne magra, jugosa y suave.", "price": 30.00, "image": "/src/assets/images/taco_maciza.png", "category": "Tacos" },
-    { "id": 101, "name": "Torta de Maciza", "description": "Bolillo crujiente relleno de Maciza.", "price": 50.00, "image": "/src/assets/images/torta_carnitas.png", "category": "Tortas" },
-    { "id": 102, "name": "Gordita de Maciza", "description": "Masa frita rellena de Maciza.", "price": 50.00, "image": "/src/assets/images/gordita_carnitas.png", "category": "Gorditas" },
-    { "id": 103, "name": "Taco de Cuero", "description": "Cuerito tierno y bien sazonado.", "price": 30.00, "image": "/src/assets/images/taco_cuero.png", "category": "Tacos" },
-    { "id": 104, "name": "Torta de Cuero", "description": "Bolillo crujiente relleno de Cuero.", "price": 50.00, "image": "/src/assets/images/torta_cuero.png", "category": "Tortas" },
-    { "id": 110, "name": "Quesadilla de Carnitas", "description": "Deliciosa quesadilla al comal rellena de Carnitas.", "price": 50.00, "image": "/src/assets/images/gordita_carnitas.png", "category": "Quesadillas" },
-    { "id": 200, "name": "Aguas de Sabor (1/2 lt)", "description": "Agua fresca del día (Horchata, Jamaica, etc.).", "price": 35.00, "image": "/src/assets/images/user_horchata.png", "category": "Bebidas" },
-    { "id": 201, "name": "Refrescos (1/2 lt)", "description": "Variedad de refrescos bien fríos.", "price": 35.00, "image": "/src/assets/images/user_coca_cola.png", "category": "Bebidas" }
+    { "id": 100, "name": "Taco de Maciza", "description": "Pura carne magra, jugosa y suave.", "price": 30.00, "image": "/assets/images/taco_maciza.png", "category": "Tacos" },
+    { "id": 101, "name": "Torta de Maciza", "description": "Bolillo crujiente relleno de Maciza.", "price": 50.00, "image": "/assets/images/torta_carnitas.png", "category": "Tortas" },
+    { "id": 102, "name": "Gordita de Maciza", "description": "Masa frita rellena de Maciza.", "price": 50.00, "image": "/assets/images/gordita_carnitas.png", "category": "Gorditas" },
+    { "id": 103, "name": "Taco de Cuero", "description": "Cuerito tierno y bien sazonado.", "price": 30.00, "image": "/assets/images/taco_cuero.png", "category": "Tacos" },
+    { "id": 104, "name": "Torta de Cuero", "description": "Bolillo crujiente relleno de Cuero.", "price": 50.00, "image": "/assets/images/torta_cuero.png", "category": "Tortas" },
+    { "id": 110, "name": "Quesadilla de Carnitas", "description": "Deliciosa quesadilla al comal rellena de Carnitas.", "price": 50.00, "image": "/assets/images/gordita_carnitas.png", "category": "Quesadillas" },
+    { "id": 200, "name": "Aguas de Sabor (1/2 lt)", "description": "Agua fresca del día (Horchata, Jamaica, etc.).", "price": 35.00, "image": "/assets/images/user_horchata.png", "category": "Bebidas" },
+    { "id": 201, "name": "Refrescos (1/2 lt)", "description": "Variedad de refrescos bien fríos.", "price": 35.00, "image": "/assets/images/user_coca_cola.png", "category": "Bebidas" }
   ]
 }

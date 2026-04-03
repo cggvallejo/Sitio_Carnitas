@@ -23,7 +23,8 @@ const LocationManager = () => {
     useEffect(() => {
         const fetchLocations = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/locations');
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                const res = await fetch(`${apiUrl}/api/locations`);
                 const data = await res.json();
                 setLocations(data);
             } catch (err) {
@@ -55,7 +56,8 @@ const LocationManager = () => {
             setModal(prev => ({ ...prev, progress: 30 }));
             addLog('Enviando cambios al servidor central...');
 
-            const res = await fetch('http://localhost:3000/api/admin/locations', {
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${apiUrl}/api/admin/locations`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',

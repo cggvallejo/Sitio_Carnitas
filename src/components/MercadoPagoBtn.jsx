@@ -56,7 +56,7 @@ const MercadoPagoBtn = ({ amount, onPaymentReady }) => {
                         },
                         onSubmit: ({ selectedPaymentMethod, formData }) => {
                             // Enviar los datos al backend para procesar el pago
-                            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+                            const apiUrl = import.meta.env.VITE_API_URL || '';
                             return new Promise((resolve, reject) => {
                                 fetch(`${apiUrl}/process_payment`, {
                                     method: 'POST',

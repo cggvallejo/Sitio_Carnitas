@@ -29,7 +29,8 @@ const CartSidebar = () => {
     useEffect(() => {
         const fetchLocations = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/locations');
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                const res = await fetch(`${apiUrl}/api/locations`);
                 const data = await res.json();
                 setLocationsData(data);
                 if (!selectedBranch && data.length > 0) setSelectedBranch(data[0]);

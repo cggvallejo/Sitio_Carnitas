@@ -23,7 +23,8 @@ const ProductManager = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/products');
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                const res = await fetch(`${apiUrl}/api/products`);
                 const data = await res.json();
                 setProducts(data);
             } catch (err) {
@@ -55,7 +56,8 @@ const ProductManager = () => {
             setModal(prev => ({ ...prev, progress: 30 }));
             addLog('Enviando menú actualizado al servidor...');
 
-            const res = await fetch('http://localhost:3000/api/admin/products', {
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${apiUrl}/api/admin/products`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -130,7 +132,8 @@ const ProductManager = () => {
             setModal(prev => ({ ...prev, progress: 40 }));
             addLog('Subiendo archivo al servidor comercial...');
 
-            const res = await fetch('http://localhost:3000/api/admin/upload', {
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${apiUrl}/api/admin/upload`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData

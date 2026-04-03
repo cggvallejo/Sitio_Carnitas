@@ -10,7 +10,7 @@ const CheckoutProBtn = ({ cart, total }) => {
         const fetchPreference = async () => {
             setLoading(true);
             try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+                const apiUrl = import.meta.env.VITE_API_URL || '';
                 const res = await fetch(`${apiUrl}/api/checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

@@ -34,7 +34,8 @@ const ConfigManager = () => {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const res = await fetch('http://localhost:3000/api/admin/config', {
+                const apiUrl = import.meta.env.VITE_API_URL || '';
+                const res = await fetch(`${apiUrl}/api/admin/config`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await res.json();
@@ -60,7 +61,8 @@ const ConfigManager = () => {
         setValidatingMP(true);
         setMpStatus(null);
         try {
-            const res = await fetch('http://localhost:3000/api/admin/validate-mp', {
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${apiUrl}/api/admin/validate-mp`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -104,7 +106,8 @@ const ConfigManager = () => {
             setModal(prev => ({ ...prev, progress: 30 }));
             addLog('Enviando datos al servidor principal...');
 
-            const res = await fetch('http://localhost:3000/api/admin/config', {
+            const apiUrl = import.meta.env.VITE_API_URL || '';
+            const res = await fetch(`${apiUrl}/api/admin/config`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
