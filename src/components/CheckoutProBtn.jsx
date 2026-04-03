@@ -11,7 +11,7 @@ const CheckoutProBtn = ({ cart, total }) => {
             setLoading(true);
             try {
                 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-                const res = await fetch(`${apiUrl}/create_preference`, {
+                const res = await fetch(`${apiUrl}/api/checkout`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cart, total }),

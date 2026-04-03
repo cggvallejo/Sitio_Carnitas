@@ -14,7 +14,7 @@ const PorkbotCursorThief = () => {
     useEffect(() => {
         let timeoutId;
 
-        const handleMouseMove = (e) => {
+        const handleMouseMove = () => {
             // Si estaba inactivo y se movió el mouse, recuperar el control
             if (isIdle) {
                 setIsIdle(false);
@@ -22,34 +22,29 @@ const PorkbotCursorThief = () => {
                 document.body.style.cursor = 'auto'; // Restaurar cursor
             }
 
-            setMousePos({ x: e.clientX, y: e.clientY });
-
             clearTimeout(timeoutId);
             timeoutId = setTimeout(() => {
                 setIsIdle(true);
+                setIsStealing(true);
+                document.body.style.cursor = 'none';
             }, IDLE_TIMEOUT);
         };
 
         window.addEventListener('mousemove', handleMouseMove);
-        // También resetear con touch para móviles aunque el cursor no aplique igual
         window.addEventListener('touchstart', handleMouseMove);
 
-        timeoutId = setTimeout(() => setIsIdle(true), IDLE_TIMEOUT);
+        timeoutId = setTimeout(() => {
+            setIsIdle(true);
+            setIsStealing(true);
+            document.body.style.cursor = 'none';
+        }, IDLE_TIMEOUT);
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('touchstart', handleMouseMove);
             clearTimeout(timeoutId);
-            document.body.style.cursor = 'auto'; // Asegurar que el cursor vuelva si se desmonta
+            document.body.style.cursor = 'auto';
         };
-    }, [isIdle]);
-
-    useEffect(() => {
-        if (isIdle) {
-            // Ocultar el cursor del sistema
-            document.body.style.cursor = 'none';
-            setIsStealing(true);
-        }
     }, [isIdle]);
 
     if (!isStealing) return null;

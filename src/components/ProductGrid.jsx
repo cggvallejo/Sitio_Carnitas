@@ -1,9 +1,26 @@
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useCart } from '../context/CartContext';
-import { products } from '../data/products';
+import { useCart } from '../hooks/useCart';
 
 const ProductGrid = () => {
     const { addToCart } = useCart();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch('http://localhost:3000/api/products');
+                const data = await res.json();
+                setProducts(data);
+            } catch (err) {
+                console.error("Error fetching products:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -25,6 +42,12 @@ const ProductGrid = () => {
             transition: { duration: 1, ease: [0.16, 1, 0.3, 1] }
         }
     };
+
+    if (loading) return (
+        <div style={{ height: '30vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} style={{ width: '40px', height: '40px', border: '3px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />
+        </div>
+    );
 
     return (
         <section id="menu" style={styles.section}>
@@ -56,7 +79,7 @@ const ProductGrid = () => {
                             key={item.id}
                             style={{
                                 ...styles.card,
-                                willChange: 'transform, box-shadow'
+                                style: { willChange: 'transform, box-shadow' }
                             }}
                             className="glass-premium"
                             variants={cardVariants}
@@ -97,7 +120,7 @@ const ProductGrid = () => {
                                 <div style={styles.footer}>
                                     <div style={styles.priceContainer}>
                                         <span style={styles.priceCurrency}>$</span>
-                                        <span style={styles.priceValue}>{item.price.toFixed(2)}</span>
+                                        <span style={styles.priceValue}>{Number(item.price).toFixed(2)}</span>
                                     </div>
                                     <motion.button
                                         whileHover={{

@@ -1,0 +1,34 @@
+{
+  "config": {
+    "mp_public_key": "APP_USR-13c58c04-793a-4e9f-9084-bfdebc56e401",
+    "mp_access_token": "APP_USR-1562900057042042-032312-7326efd14beeb5f2d0043fe308e3a927-194749488",
+    "admin_user": "lapatrona",
+    "admin_pass_hash": "$2b$10$Q.2BsaifWymjW1kld3h5WeoRDVkSHYM.S/w.adLUaRUS/g4FuatNC" 
+  },
+  "locations": [
+    {
+      "id": 1,
+      "name": "Carnitas La Patrona",
+      "address": "Av. Huayacán esquina con Calle Palma Real, Cascadas, 77535 Cancún, Q.R.",
+      "phone": "998 123 4567",
+      "hours": "Lunes a Domingo: 8:00 AM - 5:00 PM",
+      "image": "/food-truck.jpg",
+      "useImageInsteadOfMap": false,
+      "staticImage": "/food-truck.jpg",
+      "iframeUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1488.35858066551!2d-86.8475647!3d21.1165028!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDA2JzU5LjQiTiA4NsKwNTAnNTEuMiJX!5e0!3m2!1ses-419!2smx!4v1712160000000",
+      "mapUrl": "https://www.google.com/maps/place/21%C2%B006'59.4%22N+86%C2%B050'51.2%22W/@21.1165028,-86.8475647,17z/",
+      "lat": 21.1165028,
+      "lng": -86.8475647
+    }
+  ],
+  "products": [
+    { "id": 100, "name": "Taco de Maciza", "description": "Pura carne magra, jugosa y suave.", "price": 30.00, "image": "/src/assets/images/taco_maciza.png", "category": "Tacos" },
+    { "id": 101, "name": "Torta de Maciza", "description": "Bolillo crujiente relleno de Maciza.", "price": 50.00, "image": "/src/assets/images/torta_carnitas.png", "category": "Tortas" },
+    { "id": 102, "name": "Gordita de Maciza", "description": "Masa frita rellena de Maciza.", "price": 50.00, "image": "/src/assets/images/gordita_carnitas.png", "category": "Gorditas" },
+    { "id": 103, "name": "Taco de Cuero", "description": "Cuerito tierno y bien sazonado.", "price": 30.00, "image": "/src/assets/images/taco_cuero.png", "category": "Tacos" },
+    { "id": 104, "name": "Torta de Cuero", "description": "Bolillo crujiente relleno de Cuero.", "price": 50.00, "image": "/src/assets/images/torta_cuero.png", "category": "Tortas" },
+    { "id": 110, "name": "Quesadilla de Carnitas", "description": "Deliciosa quesadilla al comal rellena de Carnitas.", "price": 50.00, "image": "/src/assets/images/gordita_carnitas.png", "category": "Quesadillas" },
+    { "id": 200, "name": "Aguas de Sabor (1/2 lt)", "description": "Agua fresca del día (Horchata, Jamaica, etc.).", "price": 35.00, "image": "/src/assets/images/user_horchata.png", "category": "Bebidas" },
+    { "id": 201, "name": "Refrescos (1/2 lt)", "description": "Variedad de refrescos bien fríos.", "price": 35.00, "image": "/src/assets/images/user_coca_cola.png", "category": "Bebidas" }
+  ]
+}

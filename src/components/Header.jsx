@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { useCart } from '../hooks/useCart';
+import { ShoppingCart, Menu, X, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import logo from '../assets/images/logo.png';
 
 const navLinks = [
-    { href: '#quienes-somos', label: 'QUIÉNES SOMOS' },
-    { href: '#menu',          label: 'NUESTRO MENÚ'  },
-    { href: '#sucursales',    label: 'SUCURSALES'    },
-    { href: '#reviews',       label: 'RESEÑAS'       },
+    { href: '/#quienes-somos', label: 'QUIÉNES SOMOS' },
+    { href: '/#menu',          label: 'NUESTRO MENÚ'  },
+    { href: '/#sucursales',    label: 'SUCURSALES'    },
+    { href: '/#reviews',       label: 'RESEÑAS'       },
 ];
 
 const Header = () => {
@@ -25,9 +26,11 @@ const Header = () => {
             >
                 <div className="container" style={styles.container}>
                     {/* Logo */}
-                    <motion.div style={styles.logoContainer} whileHover={{ scale: 1.05 }}>
-                        <img src={logo} alt="Carnitas La Patrona" style={styles.logoImg} />
-                    </motion.div>
+                    <Link to="/" style={{ textDecoration: 'none' }}>
+                        <motion.div style={styles.logoContainer} whileHover={{ scale: 1.05 }}>
+                            <img src={logo} alt="Carnitas La Patrona" style={styles.logoImg} />
+                        </motion.div>
+                    </Link>
 
                     {/* Nav escritorio */}
                     <nav className="nav-desktop" style={styles.nav}>
@@ -42,12 +45,28 @@ const Header = () => {
                                 {link.label}
                             </motion.a>
                         ))}
-                        <CartBtn cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
+                        
+                        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                            <CartBtn cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
+                            
+                            <Link to="/admin/login" style={{ textDecoration: 'none' }}>
+                                <motion.button
+                                    whileHover={{ scale: 1.1, color: 'var(--primary)' }}
+                                    style={styles.adminBtn}
+                                    title="Administración"
+                                >
+                                    <User size={20} strokeWidth={1.5} />
+                                </motion.button>
+                            </Link>
+                        </div>
                     </nav>
 
                     {/* Móvil: carrito + hamburguesa */}
                     <div className="mobile-right-header" style={styles.mobileRight}>
                         <CartBtn cartCount={cartCount} setIsCartOpen={setIsCartOpen} />
+                        <Link to="/admin/login">
+                           <User size={20} style={{ color: 'var(--accent)', marginLeft: '10px' }} />
+                        </Link>
                         <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={() => setMenuOpen(!menuOpen)}
@@ -194,6 +213,19 @@ const styles = {
         borderRadius: '50%',
         fontWeight: 700,
         boxShadow: '0 5px 15px rgba(179, 84, 30, 0.4)',
+    },
+    adminBtn: {
+        background: 'transparent',
+        border: '1px solid rgba(255,255,255,0.1)',
+        color: 'var(--text-muted)',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '45px',
+        height: '45px',
+        borderRadius: '50%',
+        transition: 'all 0.3s ease',
     },
     /* Móvil */
     mobileRight: {

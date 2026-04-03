@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { useCart } from '../context/CartContext';
+import React, { useState, useEffect } from 'react';
+import { useCart } from '../hooks/useCart';
 import MercadoPagoBtn from './MercadoPagoBtn';
 import CheckoutProBtn from './CheckoutProBtn';
 import { MapPin, X, Trash2, Banknote, CreditCard, TabletSmartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { locationsData, getClosestBranch } from '../data/locations';
+// Eliminamos la importación estática de locationsData
+import { getClosestBranch } from '../data/locations'; 
 
 const CartSidebar = () => {
     const {
@@ -18,10 +19,28 @@ const CartSidebar = () => {
         setSelectedBranch
     } = useCart();
 
+    const [locationsData, setLocationsData] = useState([]);
+    const [loadingLocations, setLoadingLocations] = useState(true);
     const [checkoutStep, setCheckoutStep] = useState('cart'); // 'cart', 'delivery', 'selection', 'mercadopago'
     const [paymentMethod, setPaymentMethod] = useState(null);
     const [deliveryMode, setDeliveryMode] = useState('local'); // 'local' or 'delivery'
     const [deliveryAddress, setDeliveryAddress] = useState('');
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const res = await fetch('http://localhost:3000/api/locations');
+                const data = await res.json();
+                setLocationsData(data);
+                if (!selectedBranch && data.length > 0) setSelectedBranch(data[0]);
+            } catch (err) {
+                console.error("Error fetching locations in sidebar:", err);
+            } finally {
+                setLoadingLocations(false);
+            }
+        };
+        if (isCartOpen) fetchLocations();
+    }, [isCartOpen]);
 
     const handleWhatsAppCheckout = (methodOverride = null) => {
         const method = methodOverride || paymentMethod || 'WhatsApp';
@@ -58,7 +77,8 @@ const CartSidebar = () => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
-                const closest = getClosestBranch(latitude, longitude);
+                // Pasamos la lista dinámica de sucursales
+                const closest = getClosestBranch(latitude, longitude, locationsData);
                 if (closest) {
                     setSelectedBranch(closest);
                 }

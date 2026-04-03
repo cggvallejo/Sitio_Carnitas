@@ -1,34 +1,3 @@
-export const locationsData = [
-    {
-        id: 1,
-        name: "Sucursal Matriz",
-        address: "Supermanzana 326 Manzana 2 Lote 9, Jardines del sur 1, 77536 Cancún, Q.R.",
-        phone: "998 123 4567",
-        hours: "Lunes a Domingo: 8:00 AM - 10:00 PM",
-        image: "/fachada-sucursal.jpg",
-        useImageInsteadOfMap: true,
-        staticImage: "/fachada-sucursal.jpg",
-        iframeUrl: "",
-        mapUrl: "https://maps.app.goo.gl/mM8eSoDbh5F6P4F9A",
-        lat: 21.1118,
-        lng: -86.8778
-    },
-    {
-        id: 2,
-        name: "Food Truck",
-        address: "Av Huayacán 311, 77533 Cancún, Q.R.",
-        phone: "998 987 6543",
-        hours: "Viernes a Domingo: 12:00 PM - 11:00 PM",
-        image: "/food-truck.jpg",
-        useImageInsteadOfMap: true,
-        staticImage: "/food-truck.jpg",
-        iframeUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500!2d-86.8407!3d21.1070!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDA2JzI1LjIiTiA4NsKwNTAnMjYuNSJX!5e0!3m2!1ses-419!2smx!4v1700000000000",
-        mapUrl: "https://www.google.com/maps/search/?api=1&query=21.1070,-86.8407",
-        lat: 21.1070,
-        lng: -86.8407
-    }
-];
-
 // Calculate Haversine distance in kilometers
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Radius of the Earth in km
@@ -42,15 +11,41 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
     return R * c;
 };
 
-// Returns the closest branch object from locationsData
-export const getClosestBranch = (userLat, userLng) => {
-    if (!locationsData || locationsData.length === 0) return null;
+// Define the base locations data
+export const locationsData = [
+    {
+        id: 'matrix',
+        name: 'Sucursal Cancún Matrix',
+        address: 'Av. Las Torres SM 50, Cancún, Q.R.',
+        phone: '998 123 4567',
+        hours: 'Lun - Dom: 8:00 AM - 4:00 PM',
+        lat: 21.1619,
+        lng: -86.8515,
+        mapUrl: 'https://maps.google.com/?q=21.1619,-86.8515',
+        iframeUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14886.649363165215!2d-86.8515!3d21.1619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjHCsDA5JzQyLjkiTiA4Nl81MScwNS40Ilc!5e0!3m2!1sen!2smx!4v1700000000000!5m2!1sen!2smx'
+    },
+    {
+        id: 'puerto',
+        name: 'Sucursal Puerto Morelos',
+        address: 'Calle Rafael Melgar, Puerto Morelos, Q.R.',
+        phone: '998 765 4321',
+        hours: 'Mar - Dom: 8:00 AM - 3:00 PM',
+        lat: 20.8475,
+        lng: -86.8756,
+        mapUrl: 'https://maps.google.com/?q=20.8475,-86.8756',
+        iframeUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14886.649363165215!2d-86.8756!3d20.8475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjDCsDUwJzUxLjAiTiA4Ns_NTInMzIuMSJX!5e0!3m2!1sen!2smx!4v1700000000000!5m2!1sen!2smx'
+    }
+];
 
-    let closest = locationsData[0];
+// Returns the closest branch object from an optional locations array
+export const getClosestBranch = (userLat, userLng, locations = locationsData) => {
+    if (!locations || locations.length === 0) return null;
+
+    let closest = locations[0];
     let minDistance = calculateDistance(userLat, userLng, closest.lat, closest.lng);
 
-    for (let i = 1; i < locationsData.length; i++) {
-        const branch = locationsData[i];
+    for (let i = 1; i < locations.length; i++) {
+        const branch = locations[i];
         const dist = calculateDistance(userLat, userLng, branch.lat, branch.lng);
         if (dist < minDistance) {
             minDistance = dist;

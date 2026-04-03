@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Phone, Clock } from 'lucide-react';
 
-import { locationsData } from '../data/locations';
-
 const Locations = () => {
+    const [locations, setLocations] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const res = await fetch('http://localhost:3000/api/locations');
+                const data = await res.json();
+                setLocations(data);
+            } catch (err) {
+                console.error("Error fetching locations:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchLocations();
+    }, []);
+
+    if (loading) return (
+        <div style={{ height: '20vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} style={{ width: '40px', height: '40px', border: '3px solid var(--accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />
+        </div>
+    );
+
     return (
         <section id="sucursales" style={styles.section}>
             <div className="container">
@@ -22,7 +44,7 @@ const Locations = () => {
                 </motion.div>
 
                 <div style={styles.grid} className="locations-grid">
-                    {locationsData.map((loc, index) => (
+                    {locations.map((loc, index) => (
                         <motion.div
                             key={loc.id}
                             initial={{ opacity: 0, y: 30 }}
