@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import multer from 'multer';
 import fs from 'fs/promises';
 import { existsSync } from 'fs';
@@ -212,6 +212,39 @@ app.post('/api/admin/validate-mp', authenticateToken, async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// --- Mercado Pago Preference Creator ---
+app.post('/api/checkout', async (req, res) => {
+    try {
+        const { cart, total } = req.body;
+        const client = await getMPClient();
+        const preference = new Preference(client);
+
+        const items = cart.map(item => ({
+            id: item.id.toString(),
+            title: item.name,
+            unit_price: Number(item.price),
+            quantity: Number(item.quantity),
+            currency_id: 'MXN'
+        }));
+
+        const body = {
+            items,
+            back_urls: {
+                success: `${req.protocol}://${req.get('host')}/`,
+                failure: `${req.protocol}://${req.get('host')}/`,
+                pending: `${req.protocol}://${req.get('host')}/`
+            },
+            auto_return: 'approved',
+        };
+
+        const result = await preference.create({ body });
+        res.json({ init_point: result.init_point });
+    } catch (error) {
+        console.error('Error creating MP preference:', error);
+        res.status(500).json({ error: 'Error al generar preferencia de pago', details: error.message });
     }
 });
 
