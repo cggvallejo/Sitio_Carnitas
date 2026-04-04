@@ -1,4 +1,5 @@
 import express from 'express';
+console.log('🚀 Iniciando servidor de La Patrona...');
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
@@ -35,7 +36,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 const distPath = path.join(process.cwd(), 'dist');
 if (existsSync(distPath)) {
     app.use(express.static(distPath));
-    app.get('(.*)', (req, res) => {
+    app.get(/.*/, (req, res) => {
         if (!req.path.startsWith('/api')) {
             res.sendFile(path.join(distPath, 'index.html'));
         }
