@@ -37,16 +37,9 @@ body {
   background-color: var(--bg-color);
   background-image: 
     radial-gradient(circle at 50% 50%, rgba(128, 0, 128, 0.1) 0%, transparent 100%),
-    radial-gradient(1px 1px at 10px 10px, rgba(255, 255, 255, 0.2) 50%, transparent 0),
-    radial-gradient(1px 1px at 20px 50px, rgba(255, 255, 255, 0.15) 50%, transparent 0),
-    radial-gradient(1.5px 1.5px at 30px 90px, rgba(255, 51, 102, 0.2) 50%, transparent 0),
-    radial-gradient(1px 1px at 40px 10px, rgba(212, 180, 117, 0.1) 50%, transparent 0),
-    radial-gradient(1px 1px at 50px 70px, rgba(255, 255, 255, 0.1) 50%, transparent 0),
-    radial-gradient(1.5px 1.5px at 60px 20px, rgba(255, 51, 102, 0.15) 50%, transparent 0),
-    radial-gradient(1px 1px at 70px 40px, rgba(255, 255, 255, 0.2) 50%, transparent 0),
-    radial-gradient(1px 1px at 80px 80px, rgba(212, 180, 117, 0.15) 50%, transparent 0),
-    radial-gradient(1.5px 1.5px at 90px 30px, rgba(255, 255, 255, 0.1) 50%, transparent 0);
-  background-size: 100% 100%, 120px 120px, 150px 150px, 130px 130px, 110px 110px, 140px 140px, 160px 160px, 125px 125px, 145px 145px, 135px 135px;
+    radial-gradient(circle at 10% 20%, rgba(255, 107, 0, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(212, 180, 117, 0.03) 0%, transparent 40%);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
   color: var(--text-main);
   font-family: var(--font-sans);
@@ -97,7 +90,8 @@ ul {
 /* Advanced Glassmorphism */
 .glass-premium {
   background: var(--glass-bg);
-  backdrop-filter: blur(25px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(25px) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow:
@@ -124,6 +118,15 @@ ul {
   background-clip: text;
   display: inline-block;
   filter: drop-shadow(0 5px 15px rgba(232, 208, 159, 0.2));
+}
+
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 5000px;
+}
+
+section:first-of-type {
+  content-visibility: visible;
 }
 
 /* Mask & Border Utilities */

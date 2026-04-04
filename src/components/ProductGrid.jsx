@@ -85,6 +85,7 @@ const ProductGrid = () => {
                                     transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
                                     src={item.image}
                                     alt={item.name}
+                                    loading="lazy"
                                     style={{
                                         ...styles.image,
                                         willChange: 'transform'
