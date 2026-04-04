@@ -35,7 +35,7 @@ app.use(express.static(path.join(process.cwd(), 'public')));
 const distPath = path.join(process.cwd(), 'dist');
 if (existsSync(distPath)) {
     app.use(express.static(distPath));
-    app.get('/:any*', (req, res) => {
+    app.get('*', (req, res) => {
         if (!req.path.startsWith('/api')) {
             res.sendFile(path.join(distPath, 'index.html'));
         }
